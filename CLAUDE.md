@@ -109,7 +109,8 @@ Read the audit's `AUDIT.md`: it leads with the verdict, what keeps it below TRUS
 |---|---|
 | `manifests/environment.json` | the validated environment, required tools, patch hashes, measured requirements (machine-readable) |
 | `scripts/` | `doctor.sh`, `setup.sh`, `smoke-test.sh`, `audit.sh`, `run-tests.sh`, `fcve.py` + gate modules |
-| `skills/verifying-lean-proofs/` | the skill: `SKILL.md`, trust matrix, `audit.sh`, `independent-check.sh`, lessons, bugs, examples, patches |
+| `skills/verifying-lean-proofs/` | the audit skill: `SKILL.md`, trust matrix, `audit.sh`, `independent-check.sh`, lessons, bugs, examples, patches |
+| `skills/new-run/` | how to start, resume and close a session: read the repo, check the handoff against reality, report before acting, write the handoff |
 | `docs/CLEAN_ROOM_REPRODUCIBILITY.md` | how to prove a fresh clone reconstructs the environment (and the record of doing so) |
 | `AGENTS.md` | short agent-neutral entry point (Hermes loads ONLY this, not CLAUDE.md; FreeBuff loads both) |
 | `docs/AGENT-INTEGRATIONS.md` | how Hermes and FreeBuff load instructions/skills here, what is verified and what is not |

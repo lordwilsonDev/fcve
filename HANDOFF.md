@@ -1,4 +1,26 @@
-# FCVE handoff — state as of 2026-09-19 (end of the session that built spec §60 steps 2-12)
+# FCVE handoff
+
+> ## CURRENT STATE — read this block first (written 2026-09-19, end of the session that built the bootstrap layer)
+> Everything below this block is **history** (older sections; parts are superseded and some opening claims are stale — e.g. VCE-001 is no longer REPAIR). Where they disagree, this block and the repository win; verify anything here with the commands at the end.
+>
+> **What FCVE is:** an evidence engine (`scripts/fcve.py`) that never collapses a claim to "VERIFIED" + a Lean-proof audit skill (`skills/verifying-lean-proofs/`). Spec: `SPECIFICATION.md`.
+> **Results (decisions are Wilson's, recorded in each receipt):** VCE-001 (Eliahou Thm 1.1) → **PROMOTE** in `deliverables/VCE-001-rev-s/`; VCE-002 (powers of two reach 1) → **PROMOTE** in `deliverables/VCE-002-rev-s/`. Earlier revisions (rev r) and the delivered runs are superseded but kept, untouched.
+> Limitations travel with each package (`ISSUE-NOTE.md`): VCE-001's independent check used **patched** lean4export/nanoda (the recorded "memoization bug" was a wrong guess; the cause was quadratic handling of literals up to 25.6M digits); repro facts were captured after the runs; computational evidence is diagnostic only.
+> **Repos (private):** `github.com/lordwilsonDev/fcve` (this repo, `main`), `github.com/lordwilsonDev/ico-collatz-verification` (VCE-002 Lean project, commit `409c4c3`). Upstream PRs open, not merged: `leanprover/lean4export#52`, `ammkrn/nanoda_lib#36`.
+> **The bootstrap layer (built this session):** `CLAUDE.md` / `AGENTS.md` (Hermes loads only AGENTS.md; FreeBuff loads both), `scripts/{setup,doctor,smoke-test,audit,run-tests,clean-room,agent-check,install-agent-skills}.sh`, `manifests/environment.json`, `docs/CLEAN_ROOM_REPRODUCIBILITY.md`, `docs/AGENT-INTEGRATIONS.md`, `tests/test_bootstrap.py` (failure injection, bug regressions, never-TRUSTED ceiling). Skills: `verifying-lean-proofs` (the audit) and `new-run` (how to start/resume/close a session). Plan of record: `docs/blueprints/FCVE-SELF-BOOTSTRAPPING-BLUEPRINT.md` (phases 1-11 done).
+> **Verified so far:** smoke test ~48 s; 56 runtime tests; clean room = 3 FAIL (found BUG-008) then PASS on `5c825cf` ×3 and `42f439a` ×1 — **but** tools were *adopted* (`--reuse-from`, disk too tight to build from scratch) and **no fresh Claude session has done a reconstruction**. Hermes loading verified with its own `prompt-size` + scanners; FreeBuff live behavior is **unverified** (no non-interactive mode).
+> **Open, in the order I'd look at them (nothing is urgent):**
+> 1. A fresh Claude session in a fresh clone reconstructs the environment from README/CLAUDE.md alone (needs a person). 2. Two more clean-room runs at the newest commit; `scripts/run-tests.sh --full`; failure injection by hand.
+> 3. Wilson's calls: `hermes skills trust /Users/lordwilson/fcve` (security setting, not run); pick a LICENSE (none chosen); the plaintext Telegram token in `~/.hermes/config.yaml`; free disk (≈2 GiB free now; a from-scratch tool build needs ≈3.5 GiB; `~/msb-backups/` grows ~1 GB/day).
+> 4. Unproven: the audit wrapper on someone else's Lean project; Linux; `batch-run` on a real Mathlib project; FreeBuff live; Hermes with the repo trusted.
+> **Rules that mattered (details: `CLAUDE.md`, `skills/verifying-lean-proofs/LESSONS.md`, `BUGS.md` BUG-001…010):** the ledger is append-only (supersede, never edit; archive, don't delete); verdicts, bridge verdicts, limitations and decisions are Wilson's — draft as PROPOSED, ask with concrete options; never turn BLOCKED/TOOL_ERROR/UNRESOLVED into FAIL or absence into PASS; `audit.sh` cannot produce TRUSTED; sample a stall before naming a cause; read rendered PDFs; never edit a running script; commit hook needs absolute `cd` paths; vault writes via Bash heredoc can trip a hook — use Edit/Write.
+> **Check this block against reality (each is quick):** `git log --oneline | head` · `scripts/doctor.sh` · `scripts/smoke-test.sh` · `scripts/agent-check.sh` · `python3 scripts/fcve.py verify deliverables/VCE-001-rev-s/event-ledger.jsonl` (and VCE-002-rev-s) · `ls docs/clean-room-records`.
+> Memory/Vault mirrors: `~/Documents/Vault/40_Memory/SESSION-HANDOFF-2026-09-19.md` (running log), `~/.claude/projects/-Users-lordwilson/memory/project_fcve_state.md`.
+
+---
+
+## History (older handoff, kept)
+
 
 Supersedes `reports/HANDOFF.md` (the earlier handoff, kept as history). Full running log with reasoning:
 `~/Documents/Vault/10_Projects/BlackSwanLabz/BlackSwanLabz-FCVE-Spec.md`. Governing spec: `SPECIFICATION.md` (62 sections).

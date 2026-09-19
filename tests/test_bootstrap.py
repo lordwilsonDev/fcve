@@ -386,23 +386,34 @@ class AgentIntegration(unittest.TestCase):
             self.assertIn(phrase, a, "AGENTS.md: " + phrase); self.assertIn(phrase, c, "CLAUDE.md: " + phrase)
         self.assertIn("CLAUDE.md", a)   # points at the full instructions
 
-    def test_skill_discovery_symlinks_and_frontmatter_limits(self):
-        for p in (".claude/skills", ".agents/skills"):
-            self.assertTrue(os.path.exists(os.path.join(ROOT, p, "verifying-lean-proofs", "SKILL.md")), p)
+    def test_skill_discovery_symlinks_and_frontmatter_limits_for_every_skill(self):
         import re
-        t = open(os.path.join(SKILL, "SKILL.md")).read(); fm = re.match(r"---\n(.*?)\n---", t, re.S).group(1)
-        name = re.search(r"^name:\s*(.+)$", fm, re.M).group(1).strip(); desc = re.search(r"^description:\s*(.+)$", fm, re.M).group(1).strip()
-        self.assertEqual(name, "verifying-lean-proofs"); self.assertRegex(name, r"^[a-z0-9]+(-[a-z0-9]+)*$"); self.assertLessEqual(len(desc), 1024)
+        names = [d for d in sorted(os.listdir(os.path.join(ROOT, "skills"))) if os.path.exists(os.path.join(ROOT, "skills", d, "SKILL.md"))]
+        self.assertIn("verifying-lean-proofs", names); self.assertIn("new-run", names)
+        for name in names:
+            for p in (".claude/skills", ".agents/skills"):
+                self.assertTrue(os.path.exists(os.path.join(ROOT, p, name, "SKILL.md")), f"{p}/{name}")
+            t = open(os.path.join(ROOT, "skills", name, "SKILL.md")).read(); fm = re.match(r"---\n(.*?)\n---", t, re.S).group(1)
+            n = re.search(r"^name:\s*(.+)$", fm, re.M).group(1).strip(); desc = re.search(r"^description:\s*(.+)$", fm, re.M).group(1).strip()
+            self.assertEqual(n, name); self.assertRegex(n, r"^[a-z0-9]+(-[a-z0-9]+)*$"); self.assertLessEqual(len(desc), 1024)
+
+    def test_new_run_skill_teaches_the_handoff_discipline(self):
+        t = open(os.path.join(ROOT, "skills", "new-run", "SKILL.md")).read()
+        for needle in ("A handoff is a set of claims, not facts", "CURRENT STATE", "HANDOFF.md", "scripts/doctor.sh", "scripts/smoke-test.sh", "the repo wins",
+                       "Report before acting", "append-only", "TRUSTED", "Closing a run", "do not push urgency", "Do not change security settings"):
+            self.assertIn(needle, t.replace("Do not push urgency", "do not push urgency") if needle == "do not push urgency" else t, needle)
+        self.assertIn("CURRENT STATE", open(os.path.join(ROOT, "HANDOFF.md")).read().split("---")[0])   # the block the skill points to exists at the top
 
     @unittest.skipUnless(have_hermes, "Hermes not installed")
     def test_hermes_own_scanners_accept_the_context_files_and_the_skill(self):
         code = ("import sys, pathlib; sys.path.insert(0, '.'); root = pathlib.Path(sys.argv[1])\n"
                 "from agent.prompt_builder import _scan_context_content\nfrom tools import skills_guard as sg\n"
                 "for f in ('AGENTS.md','CLAUDE.md','README.md'):\n    print('CTX', f, _scan_context_content((root/f).read_text(), f).startswith('[BLOCKED'))\n"
-                "print('SKILL', sg.scan_skill(root/'skills'/'verifying-lean-proofs', source='local').verdict)\n")
+                "for d in sorted((root/'skills').iterdir()):\n    if (d/'SKILL.md').is_file(): print('SKILL', d.name, sg.scan_skill(d, source='local').verdict)\n")
         r = subprocess.run([HERMES_PY, "-c", code, ROOT], cwd=HERMES_SRC, capture_output=True, text=True, timeout=120); out = r.stdout
         for f in ("AGENTS.md", "CLAUDE.md", "README.md"): self.assertIn(f"CTX {f} False", out, r.stdout + r.stderr)
-        self.assertIn("SKILL safe", out)      # 'dangerous' would quarantine the skill in a trusted project (it was 'dangerous' before the `host` rename)
+        for skill in ("verifying-lean-proofs", "new-run"):
+            self.assertIn(f"SKILL {skill} safe", out, out)   # 'dangerous' would quarantine the skill in a trusted project (it once was, over a key name)
 
     def test_the_variable_name_that_tripped_hermes_dns_exfiltration_rule_is_gone(self):   # regression for the skills_guard false positive
         src = open(os.path.join(SKILL, "scripts", "audit.sh")).read()

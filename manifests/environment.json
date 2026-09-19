@@ -181,7 +181,8 @@
     "skills/verifying-lean-proofs/scripts/setup-independent-checker.sh",
     "skills/verifying-lean-proofs/scripts/export-literal-scan.py",
     "skills/verifying-lean-proofs/patches/lean4export-fast-natval.diff",
-    "skills/verifying-lean-proofs/patches/nanoda-fast-decimal-parse.diff"
+    "skills/verifying-lean-proofs/patches/nanoda-fast-decimal-parse.diff",
+    "skills/new-run/SKILL.md"
   ],
   "verdict_semantics": {
     "PASS": "the check ran and its conditions hold",
