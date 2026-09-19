@@ -488,6 +488,11 @@ class LoadCanaries(unittest.TestCase):
         for path, v in c.items():
             with open(os.path.join(ROOT, path)) as f: self.assertIn(v["word"], f.read(), path)
 
+    def test_loading_check_doc_defines_a_test_where_a_lookup_cannot_pass(self):   # lesson from an agent that answered by grepping
+        with open(os.path.join(ROOT, "docs", "LOADING-CHECK.md")) as f: doc = f.read()
+        for needle in ("Do not use any tools", "Control", "not in my context", "lookup", "NO-SUCH-FILE", "A pass = positive answers correctly"):
+            self.assertIn(needle, doc, needle)
+
     def test_loading_check_doc_lists_the_same_canaries(self):
         with open(os.path.join(ROOT, "docs", "LOADING-CHECK.md")) as f: doc = f.read()
         for v in self.canaries().values(): self.assertIn(v["word"], doc)

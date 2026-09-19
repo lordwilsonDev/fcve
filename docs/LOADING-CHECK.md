@@ -15,9 +15,22 @@ scripts/agent-check.sh                  # is it wired for the agents installed h
 ```
 Then open your agent **inside the repo directory** and say: **`new run`** (the `new-run` skill starts or resumes a session and reports state before doing anything).
 
+## How to run a canary test so that a pass means something
+
+A canary only proves *loading* if the agent could not have obtained it any other way. An agent with file tools can pass by reading the file (that is a **lookup**, not a load; one agent reported exactly this
+on 2026-09-19: it answered correctly, then said it had grepped the repo from a different working directory). So run **both** halves, as the **first** message of a **fresh** session:
+
+1. **Positive (start the agent in the repo root** — Hermes: `cd <repo> && hermes`; FreeBuff: `cd <repo> && freebuff` or `freebuff --cwd <repo>`). First message, verbatim:
+   > *Do not use any tools and do not read any files. Answer only from the instructions you were given at startup. What is the FCVE load canary for AGENTS-MD? If it is not in your startup context, say "not in my context".*
+   Expected: `harbor-lantern-7`. If it says "not in my context", the file did not load.
+2. **Control (start the same agent in a different directory, e.g. `/tmp`), same message.** Expected: **"not in my context".** If it still answers, it looked the answer up (or the canary leaked from somewhere else), and the positive result proves nothing.
+3. **Decoy (either place):** ask for the canary for `NO-SUCH-FILE`. Expected: "not in my context". An invented word means the model guesses; discount every answer it gives.
+
+A pass = positive answers correctly **and** control does not. Anything else is inconclusive, not a pass. A model that answers correctly *after using a tool* has shown retrieval, not loading. Free models are weak: repeat once before concluding.
+
 ## The load canaries
 
-Each instruction file and skill carries a unique phrase (`manifests/load-canaries.json`). Ask the agent the question; a correct answer proves that file is in its context. They are not secrets.
+Each instruction file and skill carries a unique phrase (`manifests/load-canaries.json`). Ask the agent the question **using the protocol above** (a correct answer only proves loading if no tool could have supplied it). They are not secrets.
 
 | File | Ask | Expected |
 |---|---|---|
