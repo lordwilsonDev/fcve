@@ -62,6 +62,12 @@ recorded PROMOTE and an issued deliverable. What is left is mostly decisions and
 - RL-002 confirmed by Wilson; report final EVENT-018. **PROMOTE recorded (Wilson's, EVENT-019)**, receipt current (no blockers, R4), package assembled: `deliverables/VCE-001-rev-s/` (ISSUE-NOTE, MANIFEST, tool-patches). VCE-001 is now PROMOTE on `verification-001s`; rev r (REPAIR) and the delivered run are superseded but untouched.
 - Logged in `~/.claude/skills/verifying-lean-proofs/BUGS.md` (BUG-002/003).
 
+## Update — GitHub (2026-09-19)
+- **Private repos created by Wilson's request:** `github.com/lordwilsonDev/fcve` (this directory, branch `main`, commit d02818b) and `github.com/lordwilsonDev/ico-collatz-verification` (the VCE-002 Lean project, branch `master`, commit 409c4c3, now has `origin`).
+- `~/fcve/.gitignore` excludes `**/source/original.pdf` (Eliahou's paper, third-party copyright; hashes stay in the ledgers) — a clone cannot re-hash it until the PDF is re-downloaded.
+- The VCE-002 snapshot/report still say "no remote": true when captured. A future revision could cite the repo URL, but the commit was still made after the runs.
+- The patched lean4export/nanoda BUILDS are not in the repo (only the diffs in `tool-patches/`).
+
 ## Open items (recommended order)
 1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
    `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered
