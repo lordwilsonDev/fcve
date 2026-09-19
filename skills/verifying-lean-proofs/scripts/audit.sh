@@ -61,7 +61,7 @@ fact() { printf '%s\t%s\n' "$1" "$2" >>"$FACTS"; }
 # FCVE_FAKE_FREE_KB is a TEST HOOK (simulates a full disk for failure-injection tests); never set in normal use.
 FREE_KB="${FCVE_FAKE_FREE_KB:-$(df -k "$OUT" | tail -1 | awk '{print $4}')}"
 HARD_KB=$(( ${AUDIT_HARD_FLOOR_KB:-1572864} ))   # 1.5 GiB: the export guard's floor (measured, not universal)
-fact host "$(uname -s) $(uname -m) $(sw_vers -productVersion 2>/dev/null) model=$(sysctl -n hw.model 2>/dev/null) ram_gib=$(python3 -c "print(round($(sysctl -n hw.memsize 2>/dev/null || echo 0)/1073741824,1))" 2>/dev/null)"
+fact machine "$(uname -s) $(uname -m) $(sw_vers -productVersion 2>/dev/null) model=$(sysctl -n hw.model 2>/dev/null) ram_gib=$(python3 -c "print(round($(sysctl -n hw.memsize 2>/dev/null || echo 0)/1073741824,1))" 2>/dev/null)"
 fact free_disk_kb "$FREE_KB"
 if [ "$FREE_KB" -lt "$HARD_KB" ]; then
   say "BLOCKED: insufficient disk ($FREE_KB KiB free, floor $HARD_KB KiB). No expensive work was started. This is not a verdict on the proof."
@@ -245,7 +245,7 @@ with open(os.path.join(out,"AUDIT.md"),"w") as f:
     line("Repository commit",f"`{facts.get('commit','?')}` (remote: {facts.get('remote','?')})")
     line("Toolchain / Lean",f"{facts.get('toolchain','?')} / {facts.get('lean_version','?')}")
     line("Mathlib revision",facts.get("mathlib","?"))
-    line("Environment",facts.get("host","?")+"; "+facts.get("tools","?"))
+    line("Environment",facts.get("machine","?")+"; "+facts.get("tools","?"))
     line("Row results",", ".join(f"{k}: {v}" for k,v in sorted(counts.items())))
     line("Patched tools",facts.get("patched_tools","unknown -- independent check did not complete"))
     line("Independent checker (row 10)",f"**{status_of(10)}** -- {facts.get('independent','not completed')}")

@@ -88,6 +88,8 @@ scripts/setup.sh [--reuse-from D] # build/verify checker tools; idempotent; reco
 scripts/smoke-test.sh             # ~1 min end-to-end proof that the machinery works and can fail correctly
 scripts/audit.sh <target> --module M --decl D [--decl D2 ...] [--fast-literals auto|yes|no] [--out DIR] [--work DIR] [--rebuild] [--skip-independent]
 scripts/run-tests.sh [--full]     # syntax checks, then real tests (fast tier; --full adds the slow end-to-end tier)
+scripts/agent-check.sh            # read-only: is this repo usable by Hermes / FreeBuff / Claude Code here? (their own scanners, hooks, discovery)
+scripts/install-agent-skills.sh   # install/update the user-level skill copies for claude / hermes / freebuff (idempotent; never overwrites a different skill)
 python3 scripts/fcve.py -h        # the FCVE evidence engine (ledger, report, receipt, ...)
 ```
 
@@ -109,6 +111,8 @@ Read the audit's `AUDIT.md`: it leads with the verdict, what keeps it below TRUS
 | `scripts/` | `doctor.sh`, `setup.sh`, `smoke-test.sh`, `audit.sh`, `run-tests.sh`, `fcve.py` + gate modules |
 | `skills/verifying-lean-proofs/` | the skill: `SKILL.md`, trust matrix, `audit.sh`, `independent-check.sh`, lessons, bugs, examples, patches |
 | `docs/CLEAN_ROOM_REPRODUCIBILITY.md` | how to prove a fresh clone reconstructs the environment (and the record of doing so) |
+| `AGENTS.md` | short agent-neutral entry point (Hermes loads ONLY this, not CLAUDE.md; FreeBuff loads both) |
+| `docs/AGENT-INTEGRATIONS.md` | how Hermes and FreeBuff load instructions/skills here, what is verified and what is not |
 | `docs/blueprints/` | the plan this bootstrap layer implements |
 | `tests/` | engine tests, bootstrap/regression/failure-injection tests, tiny Lean fixtures |
 | `deliverables/`, `verification*/` | issued packages and runs. Delivered runs are never edited |

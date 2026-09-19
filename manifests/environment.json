@@ -165,7 +165,11 @@
     "tool-patches/lean4export-fast-natval.diff",
     "tool-patches/nanoda-fast-decimal-parse.diff",
     "tests/fixtures/mini-lean-ok/Mini.lean",
-    "tests/fixtures/mini-lean-bad/Mini.lean"
+    "tests/fixtures/mini-lean-bad/Mini.lean",
+    "AGENTS.md",
+    "scripts/agent-check.sh",
+    "scripts/install-agent-skills.sh",
+    "docs/AGENT-INTEGRATIONS.md"
   ],
   "expected_skill_files": [
     "skills/verifying-lean-proofs/SKILL.md",

@@ -370,6 +370,102 @@ class TamperedEvidence(unittest.TestCase):
             self.assertEqual(run(["shasum", "-a", "256", "-c", "MANIFEST.sha256"], cwd=p).returncode, 0, d)
 
 
+
+# --------------------------------------------------------------------------------------- Hermes / FreeBuff integration
+HERMES_PY = os.path.join(HOME, ".hermes", "hermes-agent", "venv", "bin", "python")
+HERMES_SRC = os.path.join(HOME, ".hermes", "hermes-agent")
+have_hermes = shutil.which("hermes") is not None and os.path.exists(HERMES_PY)
+
+
+class AgentIntegration(unittest.TestCase):
+    """The repo must be usable by Hermes and FreeBuff. Agent-specific tests SKIP (reported as skipped, not passed) if the agent is not installed."""
+
+    def test_agents_md_and_claude_md_share_the_hard_rules(self):
+        a = open(os.path.join(ROOT, "AGENTS.md")).read(); c = open(os.path.join(ROOT, "CLAUDE.md")).read()
+        for phrase in ("TRUSTED", "BLOCKED", "TOOL_ERROR", "propose", "SKILL.md", "doctor.sh", "smoke-test.sh", "PROVISIONAL"):
+            self.assertIn(phrase, a, "AGENTS.md: " + phrase); self.assertIn(phrase, c, "CLAUDE.md: " + phrase)
+        self.assertIn("CLAUDE.md", a)   # points at the full instructions
+
+    def test_skill_discovery_symlinks_and_frontmatter_limits(self):
+        for p in (".claude/skills", ".agents/skills"):
+            self.assertTrue(os.path.exists(os.path.join(ROOT, p, "verifying-lean-proofs", "SKILL.md")), p)
+        import re
+        t = open(os.path.join(SKILL, "SKILL.md")).read(); fm = re.match(r"---\n(.*?)\n---", t, re.S).group(1)
+        name = re.search(r"^name:\s*(.+)$", fm, re.M).group(1).strip(); desc = re.search(r"^description:\s*(.+)$", fm, re.M).group(1).strip()
+        self.assertEqual(name, "verifying-lean-proofs"); self.assertRegex(name, r"^[a-z0-9]+(-[a-z0-9]+)*$"); self.assertLessEqual(len(desc), 1024)
+
+    @unittest.skipUnless(have_hermes, "Hermes not installed")
+    def test_hermes_own_scanners_accept_the_context_files_and_the_skill(self):
+        code = ("import sys, pathlib; sys.path.insert(0, '.'); root = pathlib.Path(sys.argv[1])\n"
+                "from agent.prompt_builder import _scan_context_content\nfrom tools import skills_guard as sg\n"
+                "for f in ('AGENTS.md','CLAUDE.md','README.md'):\n    print('CTX', f, _scan_context_content((root/f).read_text(), f).startswith('[BLOCKED'))\n"
+                "print('SKILL', sg.scan_skill(root/'skills'/'verifying-lean-proofs', source='local').verdict)\n")
+        r = subprocess.run([HERMES_PY, "-c", code, ROOT], cwd=HERMES_SRC, capture_output=True, text=True, timeout=120); out = r.stdout
+        for f in ("AGENTS.md", "CLAUDE.md", "README.md"): self.assertIn(f"CTX {f} False", out, r.stdout + r.stderr)
+        self.assertIn("SKILL safe", out)      # 'dangerous' would quarantine the skill in a trusted project (it was 'dangerous' before the `host` rename)
+
+    def test_the_variable_name_that_tripped_hermes_dns_exfiltration_rule_is_gone(self):   # regression for the skills_guard false positive
+        src = open(os.path.join(SKILL, "scripts", "audit.sh")).read()
+        self.assertNotIn('fact host "', src); self.assertIn('fact machine "', src)
+
+    @unittest.skipUnless(have_hermes, "Hermes not installed")
+    def test_hermes_loads_project_context_only_inside_the_repo(self):
+        def ctx(cwd):
+            r = subprocess.run(["hermes", "prompt-size", "--json"], cwd=cwd, capture_output=True, text=True, env=ENV, timeout=120)
+            return [x[2] for x in json.loads(r.stdout)["sections"] if x[0].startswith("context")][0]
+        here, elsewhere = ctx(ROOT), ctx(tempfile.gettempdir())
+        self.assertGreater(here, elsewhere, "Hermes loaded no project context in the repo (AGENTS.md not picked up)")
+
+    def test_agent_check_has_no_FAIL_here(self):
+        r = run(["bash", os.path.join(SCRIPTS, "agent-check.sh")], timeout=240)
+        self.assertNotIn("[FAIL", r.stdout, r.stdout); self.assertIn(r.returncode, (0, 3))   # 3 = unresolved (FreeBuff live behavior), never silently 0
+
+    def test_agent_check_FAILS_on_a_copy_missing_AGENTS_md_and_the_skill_links(self):   # negative control: it must be able to fail
+        with tempfile.TemporaryDirectory() as t:
+            copy_repo_light(t)
+            r = run(["bash", os.path.join(t, "scripts", "agent-check.sh")], timeout=240)
+            self.assertEqual(r.returncode, 1, r.stdout[-600:]); self.assertRegex(r.stdout, r"\[FAIL[^\]]*\] repo\s+AGENTS.md")
+
+
+class InstallAgentSkills(unittest.TestCase):
+    """scripts/install-agent-skills.sh, exercised against a throwaway HOME so real agent directories are never touched."""
+    def inst(self, home, *args): return run(["bash", os.path.join(SCRIPTS, "install-agent-skills.sh"), *args], env={"HOME": home})
+
+    def test_dry_run_creates_nothing(self):
+        with tempfile.TemporaryDirectory() as h:
+            r = self.inst(h, "--agent", "claude", "--dry-run"); self.assertEqual(r.returncode, 0); self.assertIn("would install", r.stdout)
+            self.assertEqual(os.listdir(h), [])
+
+    def test_installs_identical_copy_is_idempotent_and_touches_nothing_else(self):
+        with tempfile.TemporaryDirectory() as h:
+            r1 = self.inst(h, "--agent", "claude"); self.assertEqual(r1.returncode, 0, r1.stdout)
+            d = os.path.join(h, ".claude", "skills", "verifying-lean-proofs")
+            self.assertEqual(subprocess.run(["diff", "-rq", "-x", ".DS_Store", SKILL, d], capture_output=True).returncode, 0)
+            r2 = self.inst(h, "--agent", "claude"); self.assertIn("[current]", r2.stdout)
+            self.assertEqual(sorted(os.listdir(h)), [".claude"]); self.assertEqual(os.listdir(os.path.join(h, ".claude")), ["skills"])
+
+    def test_check_detects_drift_and_a_missing_copy(self):
+        with tempfile.TemporaryDirectory() as h:
+            self.assertEqual(self.inst(h, "--agent", "claude", "--check").returncode, 1)      # missing
+            self.inst(h, "--agent", "claude")
+            self.assertEqual(self.inst(h, "--agent", "claude", "--check").returncode, 0)
+            with open(os.path.join(h, ".claude", "skills", "verifying-lean-proofs", "SKILL.md"), "a") as f: f.write("\ndrift\n")
+            r = self.inst(h, "--agent", "claude", "--check"); self.assertEqual(r.returncode, 1); self.assertIn("DRIFT", r.stdout)
+
+    def test_refuses_to_overwrite_a_different_skill_with_the_same_directory_name(self):
+        with tempfile.TemporaryDirectory() as h:
+            d = os.path.join(h, ".claude", "skills", "verifying-lean-proofs"); os.makedirs(d)
+            with open(os.path.join(d, "SKILL.md"), "w") as f: f.write("---\nname: someone-elses-skill\ndescription: not ours\n---\nkeep me\n")
+            r = self.inst(h, "--agent", "claude"); self.assertEqual(r.returncode, 1); self.assertIn("REFUSED", r.stdout)
+            self.assertIn("keep me", open(os.path.join(d, "SKILL.md")).read())     # untouched
+
+    def test_updates_an_older_copy_of_this_same_skill(self):
+        with tempfile.TemporaryDirectory() as h:
+            self.inst(h, "--agent", "claude"); d = os.path.join(h, ".claude", "skills", "verifying-lean-proofs")
+            with open(os.path.join(d, "BUGS.md"), "a") as f: f.write("\nstale edit\n")
+            r = self.inst(h, "--agent", "claude"); self.assertEqual(r.returncode, 0, r.stdout)
+            self.assertEqual(subprocess.run(["diff", "-rq", "-x", ".DS_Store", SKILL, d], capture_output=True).returncode, 0)
+
 # ------------------------------------------------------------------------------------------------------------ slow tier
 @unittest.skipUnless(FULL and have_setup, "slow tier: set FCVE_TEST_FULL=1 and run scripts/setup.sh first")
 class SlowTier(unittest.TestCase):

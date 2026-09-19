@@ -77,3 +77,6 @@ skill's own scripts* are in `BUGS.md`; this file is what the audits taught about
 27. **A test that passes only because of an untracked file is machine-specific state.** Run the tests from a fresh clone of the *pushed* repository, not your working tree. The first clean-room runs failed on a
     gitignored third-party PDF the author had never noticed the tests depended on (BUG-008). A skipped test must say so; a bare OK that hides skips is a false green.
 28. **Never edit a script while it is running** (BUG-009): bash reads by byte offset.
+29. **Run the other agent's own checks before calling something compatible with it.** Hermes runs an injection scanner on context files and `skills_guard` on repo skills; running them showed the skill rated "dangerous" over a variable named `host`
+    (BUG-010). Read how each agent discovers instructions and skills from its *code* (it may load only one context file, first found wins) rather than assuming the Claude Code layout applies.
+30. **A model's self-report is not evidence of what it loaded.** Two one-shot Hermes questions gave one right and one "I don't have the repository's instructions". The deterministic check (`hermes prompt-size`: 4,552 B of project context in the repo vs 0 B elsewhere) is what to trust.

@@ -85,7 +85,7 @@ scripts/doctor.sh && scripts/smoke-test.sh
 
 Open Claude Code in the repository. `CLAUDE.md` is the entry point; it tells Claude to read this README, run the doctor, load the skill, run setup only where
 needed, run the smoke test, and only then work. The skill is discoverable at `skills/verifying-lean-proofs/SKILL.md` and, via a project-level symlink,
-at `.claude/skills/verifying-lean-proofs`. A previous Claude session is not needed and not trusted: [`docs/CLEAN_ROOM_REPRODUCIBILITY.md`](docs/CLEAN_ROOM_REPRODUCIBILITY.md)
+at `.claude/skills/verifying-lean-proofs`. **Hermes and FreeBuff** are supported too: `AGENTS.md` is their entry point, the skill is discoverable at `.agents/skills/` and via user-level copies (`scripts/install-agent-skills.sh`), and `scripts/agent-check.sh` verifies it with each agent's own scanners — see [`docs/AGENT-INTEGRATIONS.md`](docs/AGENT-INTEGRATIONS.md) (including what is *not* verified, and the one security decision left to you: trusting the repo in Hermes). A previous Claude session is not needed and not trusted: [`docs/CLEAN_ROOM_REPRODUCIBILITY.md`](docs/CLEAN_ROOM_REPRODUCIBILITY.md)
 is the procedure for proving that.
 
 ## 9. Environment Doctor

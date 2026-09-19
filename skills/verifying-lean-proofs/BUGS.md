@@ -178,3 +178,14 @@ tests assert `modified != original` before trusting a control (`assertNotEqual(e
 
 **Status:** Noted 2026-09-19. `scripts/clean-room.sh` was edited in place while a 3-run job was executing it; bash reads a script incrementally by byte offset, so the edit shifted the file and the job ended with `line 73: e: command not found`
 (harmless here — it was the final `exit` line — but the same edit could have run a wrong command mid-script). **Rule:** never edit a script that a running job is executing; wait, or copy to a new path first.
+
+---
+
+## BUG-010: Hermes's `skills_guard` rated the skill "dangerous" (false positive on a key named `host`)
+
+**Status:** Fixed 2026-09-19. **Found by:** running Hermes's own scanner (`tools.skills_guard.scan_skill`) on the skill while making it available to Hermes; a `dangerous` verdict quarantines a project skill (excluded from the index, list, view and slash commands).
+**Cause:** `audit.sh` recorded a fact under the key `host`, written as the word host, a space, then a shell command substitution. Hermes's critical rule `dns_exfil` matches the word host followed by whitespace and a dollar sign later on the same line (it is looking for DNS-lookup exfiltration).
+The line only recorded local hardware facts into a local file; no DNS or network call was involved. A false positive, but one with real consequences: the skill would silently vanish from a trusted repo.
+**Fix:** the key is now `machine`. **Regression tests:** `tests/test_bootstrap.py::AgentIntegration` (`test_hermes_own_scanners_accept_the_context_files_and_the_skill` runs Hermes's scanner over the WHOLE skill directory, and `test_the_variable_name_that_tripped_hermes_dns_exfiltration_rule_is_gone`); `scripts/agent-check.sh` re-runs the scanner on every check.
+**Second-order lesson, found immediately:** the first version of *this very entry* quoted the offending line and pattern verbatim, and the scanner flagged the documentation itself (it scans every file in the skill, not just scripts). The test failed within minutes. Describe such patterns in words; never paste them into a scanned directory.
+**Also learned:** other agents have their own scanners and loading rules; "compatible" means running *their* checks, not assuming. Hermes also loads only ONE project-context file, first found wins, so `AGENTS.md` must be self-sufficient (see `docs/AGENT-INTEGRATIONS.md`).
