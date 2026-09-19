@@ -68,6 +68,10 @@ recorded PROMOTE and an issued deliverable. What is left is mostly decisions and
 - The VCE-002 snapshot/report still say "no remote": true when captured. A future revision could cite the repo URL, but the commit was still made after the runs.
 - The patched lean4export/nanoda BUILDS are not in the repo (only the diffs in `tool-patches/`).
 
+## Update — upstream PRs + skill tried on more proofs (2026-09-19)
+- **Upstream PRs opened (from `lordwilsonDev` forks):** `leanprover/lean4export#52` (sub-quadratic natVal printing) and `ammkrn/nanoda_lib#36` (sub-quadratic decimal parse). Bodies state the diagnosis, evidence, and that the exporter patch was NOT built on upstream's v4.35.0-rc2 (disk). Watch for maintainer feedback; nothing merged. Until merged, patched builds + `tool-patches/` are needed.
+- **Upgraded `verifying-lean-proofs` skill tried on the 3 theorems that Phase 18 had BLOCKED** (`~/ico-collatz/experiments/independent-checker/skill-run2/`): `results_rational_approx_bound` PASS (16,940 decls), `results_eliahou_bound` PASS (17,493), `results_eliahou_bound_card` PASS (17,505). With the five earlier passes, all 9 paper-facing declarations of eliahou-collatz-bounds are now independently checked (the four formerly blocked ones with patched tools). Caveat: printed target + "no errors" confirmed; the checker's axiom sets for these three were not compared to a fresh row-6 audit. Not in any FCVE report.
+
 ## Open items (recommended order)
 1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
    `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered

@@ -1,0 +1,16 @@
+2026-09-19T15:00:29Z START decl=results_eliahou_bound_card
+2026-09-19T15:00:29Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export-fastnat/.lake/build/bin/lean4export Results -- results_eliahou_bound_card > /Users/lordwilson/ico-collatz/experiments/independent-checker/skill-run2/results_eliahou_bound_card.export
+2026-09-19T15:00:29Z START disk: /dev/disk3s1s1   239362496  12345428   2253068    85%  458732 22530680    2%   /
+2026-09-19T15:00:49Z tick t=20s free_kb=2252348 out_bytes=0 flat_ticks=0
+2026-09-19T15:01:09Z tick t=40s free_kb=2251596 out_bytes=0 flat_ticks=1
+2026-09-19T15:01:30Z tick t=61s free_kb=2252496 out_bytes=0 flat_ticks=2
+2026-09-19T15:01:50Z tick t=81s free_kb=2251872 out_bytes=0 flat_ticks=3
+2026-09-19T15:02:10Z tick t=101s free_kb=2253124 out_bytes=0 flat_ticks=4
+2026-09-19T15:02:30Z tick t=121s free_kb=2252604 out_bytes=0 flat_ticks=5
+2026-09-19T15:02:50Z tick t=141s free_kb=2262460 out_bytes=0 flat_ticks=6
+2026-09-19T15:03:10Z tick t=161s free_kb=2262212 out_bytes=0 flat_ticks=7
+2026-09-19T15:03:30Z tick t=181s free_kb=2158532 out_bytes=105402368 flat_ticks=0
+2026-09-19T15:03:50Z tick t=201s free_kb=2147812 out_bytes=105402368 flat_ticks=1
+2026-09-19T15:04:10Z tick t=221s free_kb=2147636 out_bytes=105402368 flat_ticks=2
+2026-09-19T15:04:30Z END rc=0 killed=0 reason=none secs=241 out_bytes=105403050 last_byte=\n
+2026-09-19T15:04:31Z LITERALS MAX_NATVAL_DIGITS=5053066 COUNT_OVER_1000=57 WARN=huge-literals: unpatched lean4export/nanoda are quadratic here; use the patched builds (patches/) and disclose them

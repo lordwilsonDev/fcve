@@ -1,0 +1,4 @@
+decl	status	closer	seconds	export_bytes	nanoda_exit	nanoda_decls	reason
+results_rational_approx_bound	PASS	nanoda	120	102604376	0	16940	-
+results_eliahou_bound	PASS	nanoda	40	105369284	0	17493	-
+results_eliahou_bound_card	PASS	nanoda	241	105403050	0	17505	-

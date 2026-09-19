@@ -1,0 +1,10 @@
+2026-09-19T14:57:29Z START decl=results_rational_approx_bound
+2026-09-19T14:57:29Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export-fastnat/.lake/build/bin/lean4export Results -- results_rational_approx_bound > /Users/lordwilson/ico-collatz/experiments/independent-checker/skill-run2/results_rational_approx_bound.export
+2026-09-19T14:57:29Z START disk: /dev/disk3s1s1   239362496  12345428   1577092    89%  458732 15770920    3%   /
+2026-09-19T14:57:49Z tick t=20s free_kb=1560484 out_bytes=0 flat_ticks=0
+2026-09-19T14:58:09Z tick t=40s free_kb=1559936 out_bytes=0 flat_ticks=1
+2026-09-19T14:58:29Z tick t=60s free_kb=2515508 out_bytes=0 flat_ticks=2
+2026-09-19T14:58:49Z tick t=80s free_kb=2510488 out_bytes=0 flat_ticks=3
+2026-09-19T14:59:09Z tick t=100s free_kb=2439640 out_bytes=70582272 flat_ticks=0
+2026-09-19T14:59:29Z END rc=0 killed=0 reason=none secs=120 out_bytes=102604376 last_byte=\n
+2026-09-19T14:59:30Z LITERALS MAX_NATVAL_DIGITS=5053066 COUNT_OVER_1000=57 WARN=huge-literals: unpatched lean4export/nanoda are quadratic here; use the patched builds (patches/) and disclose them

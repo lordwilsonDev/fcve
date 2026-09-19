@@ -1,0 +1,4 @@
+exporter	/Users/lordwilson/ico-collatz/targets/lean4export-fastnat/.lake/build/bin/lean4export	f288af5045021c2dd823fd80b1a97099e71fd9ac1e164ed852254ac902706933
+nanoda	/Users/lordwilson/ico-collatz/targets/nanoda_lib-fastparse/target/release/nanoda_bin	694170080bdcd4797cc83b4851a540f8be952a356d561490596c02f4e3a42332
+git	/Users/lordwilson/ico-collatz/targets/lean4export-fastnat	d065b0009aed0520e9e99752847a33b337661690	dirty_files=2
+git	/Users/lordwilson/ico-collatz/targets/nanoda_lib-fastparse	4c544ed4099c8227f07d5de77ad1e69fb0740a27	dirty_files=1
