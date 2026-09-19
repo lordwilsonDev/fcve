@@ -83,6 +83,12 @@ Copy to `docs/clean-room-records/YYYY-MM-DD-runN.md`.
 
 ## Measured record
 
-Records live in [`docs/clean-room-records/`](clean-room-records/). **As of this file's creation no complete clean-room reconstruction has been
-recorded** — see the records folder for what has and has not been done, and do not treat this procedure as validated until three consecutive
-runs are recorded there.
+Records live in [`clean-room-records/`](clean-room-records/). Status as of 2026-09-19 (commit `5c825cf`):
+
+- **Scripted runs (`scripts/clean-room.sh`): 3 consecutive PASS** — fresh clone from the remote → doctor → setup → doctor → smoke test → audit, no manual steps.
+  The first three runs (earlier commit) **FAILED** and found a real bug: tests that depended on a gitignored third-party PDF (BUG-008). Fixed; the next three runs passed.
+- **Not yet done, so this procedure is NOT fully validated:**
+  1. The checker tools were **adopted** (`--reuse-from`, verified by commit and patch equality), not built from scratch — the disk here (~2 GiB free) cannot hold a from-scratch build above the 1.5 GiB floor, and setup correctly refuses. Free ≥ ~3.5 GiB and run without `--reuse-from` to test it.
+     (Separately, a from-scratch tool build was measured earlier at 23 s upstream / 39 s patched.)
+  2. No **fresh Claude session** has yet read the repository and reconstructed the environment from `README.md` / `CLAUDE.md` alone (procedure steps 6-8). That needs a person to open Claude in a fresh clone.
+  3. Failure injection (Test D) is automated in `tests/test_bootstrap.py`; it has not been repeated by hand inside a clean room.

@@ -79,6 +79,11 @@ recorded PROMOTE and an issued deliverable. What is left is mostly decisions and
 ## Planned (not started)
 - `docs/blueprints/FCVE-SELF-BOOTSTRAPPING-BLUEPRINT.md` — Wilson's plan to make a fresh clone self-bootstrapping on the Mac mini (CLAUDE.md, README rewrite, setup/doctor/smoke scripts, environment manifest, clean-room procedure, regression + failure-injection tests). Added 2026-09-19 as a plan of record only; **nothing implemented, nothing deleted; Wilson said "not ready yet".** Its 20 phases start with inspecting what already exists (much of `audit.sh`, the skill, and the trust matrix already covers parts of it).
 
+## Update — self-bootstrapping layer built (blueprint phases 1-11) + clean room started
+- Added: `CLAUDE.md`, README rewrite (22 sections), `scripts/{setup,doctor,smoke-test,audit,run-tests,clean-room}.sh`, `scripts/lib/common.sh`, `manifests/environment.json`, `docs/CLEAN_ROOM_REPRODUCIBILITY.md`, `tests/test_bootstrap.py` (44 runtime tests: failure injection + BUG-003/005/006/007 regressions + the never-TRUSTED ceiling), tiny Lean fixtures, `.claude/skills` discovery symlink. `audit.sh`: report header, hard PROVISIONAL ceiling, BLOCKED-before-work on low disk, `--skip-independent`. BUG-007 (`pkill -f`), BUG-008 (test depending on a gitignored PDF), BUG-009 (editing a running script).
+- Measured here: smoke test ~48 s; doctor ~3 s; setup 31-115 s with adopted tools; `run-tests.sh` ~3.5 min. **Clean room: 3 FAIL (found BUG-008), then 3 consecutive PASS on `5c825cf`** — with tools ADOPTED (disk too tight for a from-scratch build) and NO fresh Claude session yet.
+- **Not done (blueprint phases 13-20 / acceptance):** a genuinely fresh Claude session reconstructing from repo instructions only; a from-scratch tool build in a clean room (needs ~3.5 GiB free); Test D by hand; `scripts/run-tests.sh --full`. Nothing was deleted.
+
 ## Open items (recommended order)
 1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
    `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered

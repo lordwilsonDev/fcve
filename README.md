@@ -157,7 +157,7 @@ and falls back. Upstream PRs (open, not merged): `leanprover/lean4export#52`, `a
 ## 17. Reproducibility
 
 The repository is the source of truth. [`manifests/environment.json`](manifests/environment.json) records the validated environment; [`docs/CLEAN_ROOM_REPRODUCIBILITY.md`](docs/CLEAN_ROOM_REPRODUCIBILITY.md) is the
-procedure (fresh clone → fresh Claude session → setup → doctor → smoke → audit → destroy → repeat ×3, plus failure injection). **No complete clean-room reconstruction has been recorded yet** — see
+procedure (fresh clone → fresh Claude session → setup → doctor → smoke → audit → destroy → repeat ×3, plus failure injection). Three consecutive scripted clean-room runs pass on commit `5c825cf` (after the first three found and fixed a real bug), **but** the checker tools were adopted rather than built from scratch and no fresh Claude session has yet done the reconstruction — so it is **not** fully validated; see
 `docs/clean-room-records/`. Reproducibility levels in reports are ceilings supported by *recorded* evidence; nothing is re-run to earn one.
 
 ## 18. Troubleshooting
