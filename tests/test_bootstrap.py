@@ -572,6 +572,48 @@ class LegacyEvidenceArchive(unittest.TestCase):
         bad = [os.path.join(dp, f) for dp, _, fs in os.walk(os.path.join(ROOT, "legacy-evidence")) for f in fs if f.lower().endswith((".pdf", ".export"))]
         self.assertEqual(bad, [])
 
+
+class RestoreScript(unittest.TestCase):
+    """scripts/restore.sh puts back gitignored source PDFs ONLY when the sha256 matches; self-contained (fabricated bytes, no real paper needed)."""
+    def make_root(self, t, content):
+        for d in ("scripts", "manifests"): shutil.copytree(os.path.join(ROOT, d), os.path.join(t, d), ignore=shutil.ignore_patterns("__pycache__"))
+        os.makedirs(os.path.join(t, "verification-x", "source"))
+        jdump({"source_original": "source/original.pdf", "source_sha256": hashlib.sha256(content).hexdigest()}, os.path.join(t, "verification-x", "source", "source-metadata.json"))
+        return os.path.join(t, "verification-x", "source", "original.pdf")
+
+    def test_restores_a_file_whose_hash_matches_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as t, tempfile.TemporaryDirectory() as src:
+            target = self.make_root(t, b"the paper"); 
+            with open(os.path.join(src, "paper.pdf"), "wb") as f: f.write(b"the paper")
+            r = run(["bash", os.path.join(t, "scripts", "restore.sh"), "--from", src]); self.assertEqual(r.returncode, 0, r.stdout + r.stderr); self.assertIn("[restored ]", r.stdout)
+            with open(target, "rb") as f: self.assertEqual(f.read(), b"the paper")
+            r2 = run(["bash", os.path.join(t, "scripts", "restore.sh"), "--from", src]); self.assertEqual(r2.returncode, 0); self.assertIn("nothing missing", r2.stdout)
+
+    def test_never_uses_a_file_with_the_wrong_hash(self):    # a wrong file is worse than a missing one
+        with tempfile.TemporaryDirectory() as t, tempfile.TemporaryDirectory() as src:
+            target = self.make_root(t, b"the paper")
+            with open(os.path.join(src, "other.pdf"), "wb") as f: f.write(b"a different paper")
+            r = run(["bash", os.path.join(t, "scripts", "restore.sh"), "--from", src])
+            self.assertEqual(r.returncode, 3, r.stdout); self.assertIn("UNRESOLVED", r.stdout); self.assertFalse(os.path.exists(target))
+
+    def test_a_present_file_with_the_wrong_hash_is_reported_and_left_alone(self):
+        with tempfile.TemporaryDirectory() as t:
+            target = self.make_root(t, b"the paper")
+            with open(target, "wb") as f: f.write(b"tampered")
+            r = run(["bash", os.path.join(t, "scripts", "restore.sh")])
+            self.assertEqual(r.returncode, 3, r.stdout); self.assertIn("MISMATCH", r.stdout)
+            with open(target, "rb") as f: self.assertEqual(f.read(), b"tampered")     # never overwritten
+
+    def test_dry_run_changes_nothing(self):
+        with tempfile.TemporaryDirectory() as t:
+            target = self.make_root(t, b"the paper"); r = run(["bash", os.path.join(t, "scripts", "restore.sh"), "--dry-run"])
+            self.assertEqual(r.returncode, 0); self.assertFalse(os.path.exists(target)); self.assertIn("would restore", r.stdout)
+
+    def test_manifest_pins_the_upstream_source_for_the_real_pdf(self):
+        m = jload(os.path.join(ROOT, "manifests", "environment.json"))["restore"]["source_pdf"]
+        self.assertEqual(m["commit"], "db804ce6305ea99a817f067869607f8b677d895a"); self.assertEqual(m["sha256"], "077292bebdf53a6e06d92fb475ce395ee1c8af4cc3e9f5c2e4620b2e35134689")
+        self.assertEqual(jload(os.path.join(ROOT, "verification", "source", "source-metadata.json"))["source_sha256"], m["sha256"])
+
 # ------------------------------------------------------------------------------------------------------------ slow tier
 @unittest.skipUnless(FULL and have_setup, "slow tier: set FCVE_TEST_FULL=1 and run scripts/setup.sh first")
 class SlowTier(unittest.TestCase):

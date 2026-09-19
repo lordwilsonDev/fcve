@@ -173,7 +173,9 @@
     "manifests/load-canaries.json",
     "docs/LOADING-CHECK.md",
     "legacy-evidence/README.md",
-    "legacy-evidence/MANIFEST.sha256"
+    "legacy-evidence/MANIFEST.sha256",
+    "scripts/restore.sh",
+    "docs/RESTORE.md"
   ],
   "expected_skill_files": [
     "skills/verifying-lean-proofs/SKILL.md",
@@ -198,5 +200,14 @@
     "NEEDS HUMAN": "requires a named human's judgment (semantic correspondence)",
     "PROVISIONAL": "no active failure, but rows remain unresolved; the ceiling of audit.sh",
     "TRUSTED": "never produced automatically; requires the human and web rows too"
+  },
+  "restore": {
+    "note": "What git does not carry, and where it can be re-obtained (verified by sha256 recorded in each run's source-metadata.json).",
+    "source_pdf": {
+      "repo": "https://github.com/tangentstorm/eliahou-collatz-bounds.git",
+      "commit": "db804ce6305ea99a817f067869607f8b677d895a",
+      "file_in_repo": "eliahou-collatz.pdf",
+      "sha256": "077292bebdf53a6e06d92fb475ce395ee1c8af4cc3e9f5c2e4620b2e35134689"
+    }
   }
 }

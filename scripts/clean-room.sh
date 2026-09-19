@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # clean-room.sh -- automate docs/CLEAN_ROOM_REPRODUCIBILITY.md steps 1-5 and 9-14 (one or more runs), and write a record per run.
 #
-#   scripts/clean-room.sh [--runs N] [--source URL_OR_PATH] [--reuse-from DIR] [--records DIR] [--tags "v4.28.0 v4.34.0"]
+#   scripts/clean-room.sh [--runs N] [--source URL_OR_PATH] [--reuse-from DIR] [--records DIR] [--restore-from DIR] [--tags "v4.28.0 v4.34.0"]
 #
 # For each run it: clones the repository FRESH (default source: this repo's `origin`, i.e. the pushed state, not your working tree) into a
 # throwaway directory it creates; runs doctor -> setup -> doctor -> smoke-test -> a representative audit using THE CLONE'S OWN scripts; records
@@ -22,11 +22,11 @@ classify_run() {
 }
 [ "${1:-}" = "--source-only" ] && return 0 2>/dev/null
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-RUNS=1; SOURCE=""; REUSE=""; RECORDS="$HERE/docs/clean-room-records"; TAGS="v4.28.0 v4.34.0"
+RUNS=1; SOURCE=""; REUSE=""; RESTORE_FROM=""; RECORDS="$HERE/docs/clean-room-records"; TAGS="v4.28.0 v4.34.0"
 while [ $# -gt 0 ]; do
   case "$1" in
     --runs) RUNS="$2"; shift 2 ;; --source) SOURCE="$2"; shift 2 ;; --reuse-from) REUSE="$2"; shift 2 ;;
-    --records) RECORDS="$2"; shift 2 ;; --tags) TAGS="$2"; shift 2 ;;
+    --records) RECORDS="$2"; shift 2 ;; --restore-from) RESTORE_FROM="$2"; shift 2 ;; --tags) TAGS="$2"; shift 2 ;;
     -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
@@ -54,6 +54,9 @@ for N in $(seq 1 "$RUNS"); do
   rm -rf "$CLONE"; git clone -q "$SOURCE" "$CLONE" || { echo "clone failed"; ALLPASS=0; continue; }
   COMMIT=$(git -C "$CLONE" rev-parse HEAD); HOSTINFO="$(sysctl -n hw.model 2>/dev/null), $(sysctl -n machdep.cpu.brand_string 2>/dev/null), $(python3 -c "print(round($(sysctl -n hw.memsize 2>/dev/null || echo 0)/1073741824))")GB, macOS $(sw_vers -productVersion 2>/dev/null), free disk $(df -h / | tail -1 | awk '{print $4}')"
   step doctor-before   bash scripts/doctor.sh                      # a fresh clone: FAIL for unbuilt tools is the EXPECTED, correct answer
+  # restore what git does not carry (gitignored source PDFs), verified by sha256; --restore-from avoids the network
+  RESTORE=(bash scripts/restore.sh); [ -n "${RESTORE_FROM:-}" ] && RESTORE=(bash scripts/restore.sh --from "$RESTORE_FROM")
+  step restore         "${RESTORE[@]}" || RUNPASS=0
   SETUP=(bash scripts/setup.sh $TAGARGS); [ -n "$REUSE" ] && SETUP=(bash scripts/setup.sh $TAGARGS --reuse-from "$REUSE")
   RESULT=PASS; BLOCKED_RUN=""
   step setup           "${SETUP[@]}"; SETUP_RC=$?; [ "$SETUP_RC" -eq 0 ] || RUNPASS=0
