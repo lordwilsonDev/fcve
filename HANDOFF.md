@@ -84,6 +84,12 @@ recorded PROMOTE and an issued deliverable. What is left is mostly decisions and
 - Measured here: smoke test ~48 s; doctor ~3 s; setup 31-115 s with adopted tools; `run-tests.sh` ~3.5 min. **Clean room: 3 FAIL (found BUG-008), then 3 consecutive PASS on `5c825cf`** — with tools ADOPTED (disk too tight for a from-scratch build) and NO fresh Claude session yet.
 - **Not done (blueprint phases 13-20 / acceptance):** a genuinely fresh Claude session reconstructing from repo instructions only; a from-scratch tool build in a clean room (needs ~3.5 GiB free); Test D by hand; `scripts/run-tests.sh --full`. Nothing was deleted.
 
+## Update — available to Hermes and FreeBuff (2026-09-19)
+- `AGENTS.md` (Hermes loads ONE project context file, first found wins → AGENTS.md beats CLAUDE.md; FreeBuff loads both), `.agents/skills/` symlink, `scripts/install-agent-skills.sh` (user-level copies: `~/.hermes/skills`, `~/.agents/skills`, `~/.claude/skills` — installed), `scripts/agent-check.sh` (read-only; runs Hermes's own scanners), `docs/AGENT-INTEGRATIONS.md`.
+- Found + fixed: Hermes `skills_guard` rated the skill **dangerous** (word `host` + `$` matched its DNS-exfil rule in `audit.sh`) → key renamed `machine` (BUG-010); the BUG-010 write-up itself re-tripped it, caught by the new test.
+- Verified: `hermes prompt-size` context 4,552 B in repo vs 0 B elsewhere; skill in Hermes's index; Hermes scanners clean; global command hook allows FCVE commands and blocks `rm -rf /`. **Not verified:** FreeBuff live behavior (no non-interactive mode); Hermes with the repo TRUSTED. **Left to Wilson:** `hermes skills trust /Users/lordwilson/fcve` (security decision, not run). Clean room: 1 PASS on `42f439a`.
+- Heads-up: `~/.hermes/config.yaml` holds a Telegram bot token in cleartext (it appeared in a tool output this session; not copied anywhere, not modified).
+
 ## Open items (recommended order)
 1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
    `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered
