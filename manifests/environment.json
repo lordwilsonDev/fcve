@@ -169,7 +169,9 @@
     "AGENTS.md",
     "scripts/agent-check.sh",
     "scripts/install-agent-skills.sh",
-    "docs/AGENT-INTEGRATIONS.md"
+    "docs/AGENT-INTEGRATIONS.md",
+    "manifests/load-canaries.json",
+    "docs/LOADING-CHECK.md"
   ],
   "expected_skill_files": [
     "skills/verifying-lean-proofs/SKILL.md",

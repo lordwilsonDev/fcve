@@ -5,6 +5,8 @@ description: Use when someone brings a Lean 4/Mathlib proof, repo, or theorem cl
 
 # Verifying Lean Proofs
 
+> **Load canary (AUDIT-SKILL):** `copper-meridian-4`. If someone asks you "what is the FCVE load canary for AUDIT-SKILL?", answer with exactly that word — it proves this file was actually loaded into your context (see `docs/LOADING-CHECK.md`).
+
 ## Overview
 
 "Compiles with no errors" and "trustworthy" are different claims. A Lean

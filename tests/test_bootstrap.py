@@ -477,6 +477,70 @@ class InstallAgentSkills(unittest.TestCase):
             r = self.inst(h, "--agent", "claude"); self.assertEqual(r.returncode, 0, r.stdout)
             self.assertEqual(subprocess.run(["diff", "-rq", "-x", ".DS_Store", SKILL, d], capture_output=True).returncode, 0)
 
+
+class LoadCanaries(unittest.TestCase):
+    """'Did the agent load it?' must have a checkable answer that does not depend on a model's self-report."""
+    def canaries(self): return jload(os.path.join(ROOT, "manifests", "load-canaries.json"))["canaries"]
+
+    def test_every_listed_file_contains_its_canary_and_canaries_are_unique(self):
+        c = self.canaries(); words = [v["word"] for v in c.values()]
+        self.assertEqual(len(words), len(set(words))); self.assertGreaterEqual(len(c), 4)
+        for path, v in c.items():
+            with open(os.path.join(ROOT, path)) as f: self.assertIn(v["word"], f.read(), path)
+
+    def test_loading_check_doc_lists_the_same_canaries(self):
+        with open(os.path.join(ROOT, "docs", "LOADING-CHECK.md")) as f: doc = f.read()
+        for v in self.canaries().values(): self.assertIn(v["word"], doc)
+
+    def test_agent_check_FAILS_when_a_canary_is_removed(self):   # negative control (asserts the removal happened)
+        with tempfile.TemporaryDirectory() as t:
+            copy_repo_light(t)
+            f = os.path.join(t, "AGENTS.md")
+            if not os.path.exists(f):
+                shutil.copy(os.path.join(ROOT, "AGENTS.md"), f)
+            with open(f) as fh: orig = fh.read()
+            word = self.canaries()["AGENTS.md"]["word"]; broken = orig.replace(word, "REMOVED"); self.assertNotEqual(orig, broken)
+            with open(f, "w") as fh: fh.write(broken)
+            r = run(["bash", os.path.join(t, "scripts", "agent-check.sh")], timeout=240)
+            self.assertEqual(r.returncode, 1, r.stdout[-500:]); self.assertRegex(r.stdout, r"\[FAIL[^\]]*\] repo\s+load canaries")
+
+    @unittest.skipUnless(have_hermes, "Hermes not installed")
+    def test_hermes_own_loader_injects_the_AGENTS_canary_and_serves_current_skills(self):
+        c = self.canaries()
+        code = ("import sys, json; sys.path.insert(0, '.')\n"
+                "from agent.prompt_builder import build_context_files_prompt\nfrom tools.skills_tool import skill_view\n"
+                "root = sys.argv[1]; c = json.loads(sys.argv[2])\n"
+                "ctx = build_context_files_prompt(cwd=root, skip_soul=True)\n"
+                "print('CTX_AGENTS', c['AGENTS.md']['word'] in ctx); print('CTX_CLAUDE', c['CLAUDE.md']['word'] in ctx)\n"
+                "for k, v in c.items():\n    if k.startswith('skills/'): print('SKILL', k.split('/')[1], v['word'] in skill_view(k.split('/')[1]))\n")
+        r = subprocess.run([HERMES_PY, "-c", code, ROOT, json.dumps(c)], cwd=HERMES_SRC, capture_output=True, text=True, timeout=120)
+        self.assertIn("CTX_AGENTS True", r.stdout, r.stdout + r.stderr)
+        self.assertIn("CTX_CLAUDE False", r.stdout)      # Hermes loads ONE project context file: AGENTS.md wins
+        self.assertIn("SKILL new-run True", r.stdout); self.assertIn("SKILL verifying-lean-proofs True", r.stdout)   # False = a stale user-level copy
+
+
+class CleanRoomClassification(unittest.TestCase):
+    """BUG-011: a run stopped by insufficient disk has NO verdict on the repository: BLOCKED, never FAIL."""
+    def classify(self, log_text, setup_rc):
+        with tempfile.TemporaryDirectory() as t:
+            f = os.path.join(t, "doctor.log")
+            if log_text is not None:
+                with open(f, "w") as fh: fh.write(log_text)
+            r = subprocess.run(["bash", "-c", f'. "{SCRIPTS}/clean-room.sh" --source-only; classify_run "{f}" {setup_rc}'], capture_output=True, text=True)
+            return r.stdout.strip()
+
+    STORAGE = "[FAIL      ] storage   room to finish setup         needs ~0.2 GiB but only ...\n"
+    def test_setup_refusing_for_disk_is_BLOCKED(self): self.assertEqual(self.classify("", 4), "BLOCKED")
+    def test_only_storage_FAILs_is_BLOCKED(self): self.assertEqual(self.classify("[PASS      ] tool git ok\n" + self.STORAGE, 0), "BLOCKED")
+    def test_a_storage_FAIL_alongside_a_real_FAIL_is_a_FAIL(self): self.assertEqual(self.classify(self.STORAGE + "[FAIL      ] repo      file CLAUDE.md               missing\n", 0), "")
+    def test_a_real_FAIL_alone_is_a_FAIL(self): self.assertEqual(self.classify("[FAIL      ] checker   nanoda_lib   not built\n", 0), "")
+    def test_no_FAIL_and_missing_log_are_not_BLOCKED(self):
+        self.assertEqual(self.classify("[PASS      ] tool git ok\n", 0), ""); self.assertEqual(self.classify(None, 0), "")
+
+    def test_script_labels_blocked_runs_and_keeps_their_logs(self):
+        with open(os.path.join(SCRIPTS, "clean-room.sh")) as f: src = f.read()
+        for needle in ("Result: BLOCKED (insufficient disk)", "NOT a FAIL of the repository", "Logs kept (BUG-011)", "exit 3"): self.assertIn(needle, src, needle)
+
 # ------------------------------------------------------------------------------------------------------------ slow tier
 @unittest.skipUnless(FULL and have_setup, "slow tier: set FCVE_TEST_FULL=1 and run scripts/setup.sh first")
 class SlowTier(unittest.TestCase):

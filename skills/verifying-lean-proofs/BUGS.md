@@ -189,3 +189,12 @@ The line only recorded local hardware facts into a local file; no DNS or network
 **Fix:** the key is now `machine`. **Regression tests:** `tests/test_bootstrap.py::AgentIntegration` (`test_hermes_own_scanners_accept_the_context_files_and_the_skill` runs Hermes's scanner over the WHOLE skill directory, and `test_the_variable_name_that_tripped_hermes_dns_exfiltration_rule_is_gone`); `scripts/agent-check.sh` re-runs the scanner on every check.
 **Second-order lesson, found immediately:** the first version of *this very entry* quoted the offending line and pattern verbatim, and the scanner flagged the documentation itself (it scans every file in the skill, not just scripts). The test failed within minutes. Describe such patterns in words; never paste them into a scanned directory.
 **Also learned:** other agents have their own scanners and loading rules; "compatible" means running *their* checks, not assuming. Hermes also loads only ONE project-context file, first found wins, so `AGENTS.md` must be self-sufficient (see `docs/AGENT-INTEGRATIONS.md`).
+
+---
+
+## BUG-011: the clean-room script called a disk-blocked run "FAIL" and threw its logs away
+
+**Status:** Fixed 2026-09-19. **Found by:** a FreeBuff session that ran the `new-run` protocol and noticed two clean-room records labelled FAIL whose only failing check was doctor's storage headroom (1.59 GiB free vs ~1.7 needed in flight).
+**What was wrong:** `clean-room.sh` marked a run FAIL on any non-zero step — the same collapse of "no verdict" into "failure" that the rest of FCVE forbids (BLOCKED is not FAIL). It also deleted the step logs with the throwaway clone, so the reason survived only as a 400-character note.
+**Fix:** `classify_run` (setup exit 4, or doctor FAIL lines that are *all* storage) labels the run **BLOCKED**, skips the heavy steps, exits 3, and keeps the logs beside the record for any non-PASS run. A real failure that happens to coincide with low disk is still FAIL.
+**Tests:** `tests/test_bootstrap.py::CleanRoomClassification` (five cases incl. the mixed one). The two earlier records keep their original FAIL label (history is not rewritten); `docs/clean-room-records/README.md` notes they were blocked, not failed.

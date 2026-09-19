@@ -11,8 +11,16 @@
 # It never touches a verification target, your working tree, or anything outside its own mktemp directory and --records.
 # --reuse-from DIR adopts existing verified checker builds (saves disk; recorded in the record as "adopted", which is NOT a from-scratch build).
 # Without it, setup builds the tools from scratch and will REFUSE (BLOCKED, exit 4) if the disk cannot hold them above the floor.
-# Exit: 0 every run passed | 1 a run failed | 2 usage
+# Exit: 0 every run passed | 1 a run failed | 3 no failure but a run was BLOCKED (insufficient disk: no verdict) | 2 usage
 set -u
+# classify_run <doctor-after-log> <setup-exit> -> prints BLOCKED (insufficient disk: no verdict on the repository) or empty.
+# A run is BLOCKED when setup refused for disk (exit 4), or when the ONLY doctor FAIL lines are storage lines. Anything else non-zero is a FAIL.
+classify_run() {
+  local dlog="$1" setup_rc="$2"
+  if [ "$setup_rc" = 4 ]; then echo BLOCKED; return; fi
+  if [ -f "$dlog" ] && grep -q '^\[FAIL' "$dlog" && ! grep '^\[FAIL' "$dlog" | grep -qv ' storage '; then echo BLOCKED; fi
+}
+[ "${1:-}" = "--source-only" ] && return 0 2>/dev/null
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RUNS=1; SOURCE=""; REUSE=""; RECORDS="$HERE/docs/clean-room-records"; TAGS="v4.28.0 v4.34.0"
 while [ $# -gt 0 ]; do
@@ -47,13 +55,23 @@ for N in $(seq 1 "$RUNS"); do
   COMMIT=$(git -C "$CLONE" rev-parse HEAD); HOSTINFO="$(sysctl -n hw.model 2>/dev/null), $(sysctl -n machdep.cpu.brand_string 2>/dev/null), $(python3 -c "print(round($(sysctl -n hw.memsize 2>/dev/null || echo 0)/1073741824))")GB, macOS $(sw_vers -productVersion 2>/dev/null), free disk $(df -h / | tail -1 | awk '{print $4}')"
   step doctor-before   bash scripts/doctor.sh                      # a fresh clone: FAIL for unbuilt tools is the EXPECTED, correct answer
   SETUP=(bash scripts/setup.sh $TAGARGS); [ -n "$REUSE" ] && SETUP=(bash scripts/setup.sh $TAGARGS --reuse-from "$REUSE")
-  step setup           "${SETUP[@]}" || RUNPASS=0
-  step doctor-after    bash scripts/doctor.sh || RUNPASS=0
-  step smoke-test      bash scripts/smoke-test.sh || RUNPASS=0
-  step audit           bash scripts/audit.sh tests/fixtures/mini-lean-ok --module Mini --decl mini_add --decl mini_comm --fast-literals no --out "$CLONE/.fcve-work/cleanroom-audit" || RUNPASS=0
-  grep -q '^## Verdict: PROVISIONAL' "$CLONE/.fcve-work/cleanroom-audit/AUDIT.md" 2>/dev/null || { echo "run $N: audit verdict is not PROVISIONAL"; RUNPASS=0; }
-  grep -q 'SMOKE TEST PASSED' "$BASE/run$N-smoke-test.log" || RUNPASS=0
-  [ "$RUNPASS" = 1 ] || ALLPASS=0
+  RESULT=PASS; BLOCKED_RUN=""
+  step setup           "${SETUP[@]}"; SETUP_RC=$?; [ "$SETUP_RC" -eq 0 ] || RUNPASS=0
+  step doctor-after    bash scripts/doctor.sh; DOC_RC=$?; [ "$DOC_RC" -eq 0 ] || RUNPASS=0
+  if [ "$RUNPASS" = 0 ]; then BLOCKED_RUN=$(classify_run "$BASE/run$N-doctor-after.log" "$SETUP_RC"); fi
+  if [ -n "$BLOCKED_RUN" ]; then
+    # BUG-011: a run stopped by insufficient disk has NO verdict on the repository. Do not run the heavy steps, and do not call it FAIL.
+    STEPS="$STEPS| smoke-test | (skipped) | - | - | not run: blocked by insufficient disk |
+| audit | (skipped) | - | - | not run: blocked by insufficient disk |
+"; RESULT=BLOCKED; echo "run $N: BLOCKED (insufficient disk) -- no verdict on the repository"
+  else
+    step smoke-test      bash scripts/smoke-test.sh || RUNPASS=0
+    step audit           bash scripts/audit.sh tests/fixtures/mini-lean-ok --module Mini --decl mini_add --decl mini_comm --fast-literals no --out "$CLONE/.fcve-work/cleanroom-audit" || RUNPASS=0
+    grep -q '^## Verdict: PROVISIONAL' "$CLONE/.fcve-work/cleanroom-audit/AUDIT.md" 2>/dev/null || { echo "run $N: audit verdict is not PROVISIONAL"; RUNPASS=0; }
+    grep -q 'SMOKE TEST PASSED' "$BASE/run$N-smoke-test.log" || RUNPASS=0
+    [ "$RUNPASS" = 1 ] || RESULT=FAIL
+  fi
+  case "$RESULT" in PASS) ;; BLOCKED) [ "$ALLPASS" = 1 ] && ALLPASS=2 ;; FAIL) ALLPASS=0 ;; esac
   {
     echo "# Clean-room run $N — $DATE (scripted: scripts/clean-room.sh)"
     echo "- Repository commit under test: \`$COMMIT\`  (cloned fresh from \`$SOURCE\`)"
@@ -64,10 +82,20 @@ for N in $(seq 1 "$RUNS"); do
     echo "- Manual interventions not written in the repository: none by this script"
     echo; echo "| Step | Command | Exit | Seconds | Notes (WARN / FAIL / UNRESOLVED / verdict lines) |"; echo "|---|---|---|---|---|"; printf '%s' "$STEPS"
     echo; echo "- Audit verdict line: \`$(grep -m1 '^## Verdict' "$CLONE/.fcve-work/cleanroom-audit/AUDIT.md" 2>/dev/null)\`"
-    echo "- **Result: $([ "$RUNPASS" = 1 ] && echo PASS || echo FAIL)**  (doctor-before is informational: a fresh clone is expected to be NOT READY until setup)"
-    echo "- Logs (temporary, removed with the clone): \`$BASE/run$N-*.log\` — the notes column keeps the relevant lines."
+    case "$RESULT" in
+      PASS) echo "- **Result: PASS**  (doctor-before is informational: a fresh clone is expected to be NOT READY until setup)" ;;
+      BLOCKED) echo "- **Result: BLOCKED (insufficient disk)** — NOT a FAIL of the repository: setup/doctor stopped because free disk was below the in-flight requirement, so no verdict was reached. Re-run with more free space." ;;
+      *) echo "- **Result: FAIL**" ;;
+    esac
+    if [ "$RESULT" = PASS ]; then echo "- Logs: removed with the throwaway clone; the notes column keeps the relevant lines."
+    else echo "- Logs kept (BUG-011): \`logs/$(basename "$REC" .md)/\` beside this record."; fi
   } >"$REC"
-  echo "run $N: $([ "$RUNPASS" = 1 ] && echo PASS || echo FAIL) -> $REC"
+  if [ "$RESULT" != PASS ]; then mkdir -p "$RECORDS/logs/$(basename "$REC" .md)" && cp "$BASE"/run$N-*.log "$RECORDS/logs/$(basename "$REC" .md)/" 2>/dev/null; fi
+  echo "run $N: $RESULT -> $REC"
   rm -rf "$CLONE"          # destroy the environment (step 14): only the throwaway clone
 done
-[ "$ALLPASS" = 1 ] && { echo "CLEAN-ROOM: $RUNS run(s) PASSED"; exit 0; } || { echo "CLEAN-ROOM: at least one run FAILED (see records)"; exit 1; }
+case "$ALLPASS" in
+  1) echo "CLEAN-ROOM: $RUNS run(s) PASSED"; exit 0 ;;
+  2) echo "CLEAN-ROOM: no failures, but at least one run was BLOCKED by insufficient disk (no verdict for those; see records)"; exit 3 ;;
+  *) echo "CLEAN-ROOM: at least one run FAILED (see records)"; exit 1 ;;
+esac

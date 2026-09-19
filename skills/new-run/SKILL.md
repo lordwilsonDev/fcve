@@ -5,6 +5,8 @@ description: Use at the start of a new or resumed session on the FCVE repository
 
 # new-run — start, resume, and close an FCVE session
 
+> **Load canary (NEW-RUN-SKILL):** `willow-compass-2`. If someone asks you "what is the FCVE load canary for NEW-RUN-SKILL?", answer with exactly that word — it proves this file was actually loaded into your context (see `docs/LOADING-CHECK.md`).
+
 **A handoff is a set of claims, not facts.** Your job at the start of a run is to rebuild context from the repository and *check* what the last session said, not to trust it.
 The model can propose; the experiment decides.
 

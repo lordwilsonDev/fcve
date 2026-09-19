@@ -35,6 +35,13 @@ done
 MISSING=""; for PH in "TRUSTED" "BLOCKED" "TOOL_ERROR" "propose" "SKILL.md" "doctor.sh" "smoke-test.sh"; do grep -q "$PH" "$FCVE_ROOT/AGENTS.md" || MISSING="$MISSING $PH"; grep -q "$PH" "$FCVE_ROOT/CLAUDE.md" || MISSING="$MISSING CLAUDE:$PH"; done
 [ -z "$MISSING" ] && record PASS repo "AGENTS.md / CLAUDE.md agree" "both carry the hard rules (TRUSTED ceiling, BLOCKED/TOOL_ERROR, propose/decide, skill, doctor, smoke test)" || record FAIL repo "AGENTS.md / CLAUDE.md agree" "missing key phrases:$MISSING"
 
+# ---- load canaries: each instruction file / skill carries a unique phrase so "did it load?" has a checkable answer ---------------
+CAN_BAD=""; while IFS=$'\t' read -r CF CW; do [ -f "$FCVE_ROOT/$CF" ] && grep -q "$CW" "$FCVE_ROOT/$CF" || CAN_BAD="$CAN_BAD $CF"; done < <(python3 -c "
+import json,sys
+for k,v in json.load(open('$FCVE_ROOT/manifests/load-canaries.json'))['canaries'].items(): print(k+'\t'+v['word'])" 2>/dev/null)
+[ -f "$FCVE_ROOT/manifests/load-canaries.json" ] && [ -z "$CAN_BAD" ] && record PASS repo "load canaries" "every instruction file and skill listed in manifests/load-canaries.json contains its canary (docs/LOADING-CHECK.md)" \
+  || record FAIL repo "load canaries" "missing or absent canary in:${CAN_BAD:- manifests/load-canaries.json}"
+
 drift() { diff -rq -x .DS_Store "$FCVE_ROOT/skills/$NAME" "$1" >/dev/null 2>&1; }   # uses $NAME (set by the caller loop)
 
 # ---- Hermes -------------------------------------------------------------------------------------------------------------
@@ -93,6 +100,43 @@ PY
       NOT_TRUSTED) record WARN hermes "repo trusted" "not trusted: repo-local skills will NOT load (the user-level copy still does). Trusting is your security decision: hermes skills trust $FCVE_ROOT" ;;
       *) record UNRESOLVED hermes "repo trusted" "could not read Hermes's trusted_project_dirs" ;; esac
   else record UNRESOLVED hermes "scanners" "Hermes's Python ($HERMES_PY) not found: cannot run its injection scanner or skills_guard"; fi
+  if [ -x "$HERMES_PY" ] && [ -f "$FCVE_ROOT/manifests/load-canaries.json" ]; then
+    CAN=$(cd "$HERMES_SRC" && "$HERMES_PY" - "$FCVE_ROOT" <<'PY' 2>&1
+import sys, json, pathlib
+sys.path.insert(0, ".")
+root = pathlib.Path(sys.argv[1]); canon = json.load(open(root / "manifests" / "load-canaries.json"))["canaries"]
+from agent.prompt_builder import build_context_files_prompt
+ctx = build_context_files_prompt(cwd=str(root), skip_soul=True)
+print("CTX AGENTS", canon["AGENTS.md"]["word"] in ctx); print("CTX CLAUDE", canon["CLAUDE.md"]["word"] in ctx)
+from tools.skills_tool import skill_view
+for k, v in canon.items():
+    if k.startswith("skills/"):
+        n = k.split("/")[1]
+        try: print("SKILL", n, v["word"] in skill_view(n))
+        except Exception as e: print("SKILL", n, "ERROR", type(e).__name__)
+PY
+)
+    echo "$CAN" | grep -q "^CTX AGENTS True" && record PASS hermes "context content" "Hermes's own context loader injects AGENTS.md (its canary is in the text it would send)" \
+      || record FAIL hermes "context content" "AGENTS.md's canary is NOT in what Hermes injects here: $(echo "$CAN" | tail -2 | tr '\n' ' ' | cut -c1-120)"
+    echo "$CAN" | grep -q "^CTX CLAUDE False" && record PASS hermes "one context type" "CLAUDE.md's canary is absent, as expected: Hermes loads only one project context file (AGENTS.md wins)" \
+      || record WARN hermes "one context type" "CLAUDE.md's canary is also present: Hermes' rule changed; AGENTS.md/CLAUDE.md may now be double-loaded"
+    for NAME in $SKILLS; do
+      case "$(echo "$CAN" | sed -n "s/^SKILL $NAME //p")" in
+        True) record PASS hermes "skill content $NAME" "the skill Hermes serves contains the current canary (not a stale copy)" ;;
+        False) record WARN hermes "skill content $NAME" "Hermes serves a skill WITHOUT the current canary: a stale user-level copy? run scripts/install-agent-skills.sh" ;;
+        *) record UNRESOLVED hermes "skill content $NAME" "could not load it through Hermes's skill_view" ;; esac
+    done
+  fi
+  # Trusted-repo path, tested WITHOUT touching your real Hermes config: trust the repo inside a THROWAWAY profile and see what would load.
+  TMPH=$(mktemp -d "${TMPDIR:-/tmp}/hermes-trust.XXXXXX")
+  case "$TMPH" in */hermes-trust.*) 
+    ( cd "$FCVE_ROOT" && HERMES_HOME="$TMPH" hermes skills trust "$FCVE_ROOT" ) >/dev/null 2>&1
+    PST=$(cd "$FCVE_ROOT" && HERMES_HOME="$TMPH" hermes prompt-size --json 2>/dev/null); rm -rf "$TMPH"
+    GOT=""; for NAME in $SKILLS; do echo "$PST" | python3 -c "import sys,json;d=json.load(sys.stdin);sys.exit(0 if any((x.get('name') if isinstance(x,dict) else x[0])=='$NAME' for x in d['skills_breakdown']) else 1)" 2>/dev/null || GOT="$GOT $NAME"; done
+    if [ -z "$PST" ]; then record UNRESOLVED hermes "trusted-repo path" "could not run Hermes with a throwaway profile"
+    elif [ -z "$GOT" ]; then record PASS hermes "trusted-repo path" "in a throwaway profile (your real config untouched), trusting this repo makes every repo skill load from .agents/skills"
+    else record FAIL hermes "trusted-repo path" "after trusting the repo in a throwaway profile these skills still did not load:$GOT"; fi ;;
+  esac
   H="$HOME/.agents/hooks/deny-dangerous.sh"
   if [ -x "$H" ] && have jq; then
     BLK=""; for C in "scripts/doctor.sh" "scripts/setup.sh --reuse-from ~/ico-collatz/targets" "scripts/smoke-test.sh" "scripts/audit.sh tests/fixtures/mini-lean-ok --module Mini --decl mini_add" "scripts/clean-room.sh --runs 1"; do
@@ -115,7 +159,7 @@ if have freebuff; then
   done
   record PASS freebuff "instruction files" "auto-reads knowledge.md / AGENTS.md / CLAUDE.md in a directory (read from its binary): both of ours are found"
   record PASS freebuff "project skills" "searches <project>/.agents/skills and <project>/.claude/skills (both present here; it follows symlinks: statSync().isDirectory())"
-  record UNRESOLVED freebuff "loaded in a live session" "FreeBuff has no non-interactive mode, so this cannot be shown by a script. Confirm by hand: cd $FCVE_ROOT && freebuff (add --trust-agents to skip the trust prompt), then ask it to list its skills"
+  record UNRESOLVED freebuff "loaded in a live session" "FreeBuff has no non-interactive mode, so no script can show it. Confirm by hand with docs/LOADING-CHECK.md: cd $FCVE_ROOT && freebuff, then ask what the FCVE load canary for AGENTS-MD is (expected: $(python3 -c "import json;print(json.load(open(\"$FCVE_ROOT/manifests/load-canaries.json\"))[\"canaries\"][\"AGENTS.md\"][\"word\"])" 2>/dev/null))"
 else record WARN freebuff install "FreeBuff is not installed here; nothing to check (skip if you do not use it)"; fi
 
 echo; echo "summary: $N_PASS PASS, $N_WARN WARN, $N_FAIL FAIL, $N_UNRESOLVED UNRESOLVED"

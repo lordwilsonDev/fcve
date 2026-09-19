@@ -1,0 +1,21 @@
+{
+  "purpose": "Load canaries: a unique phrase placed in each instruction file / skill so anyone (or a script) can prove the agent actually loaded it. Not secrets. Checked by scripts/agent-check.sh and tests/test_bootstrap.py.",
+  "canaries": {
+    "AGENTS.md": {
+      "tag": "AGENTS-MD",
+      "word": "harbor-lantern-7"
+    },
+    "CLAUDE.md": {
+      "tag": "CLAUDE-MD",
+      "word": "slate-orchard-9"
+    },
+    "skills/verifying-lean-proofs/SKILL.md": {
+      "tag": "AUDIT-SKILL",
+      "word": "copper-meridian-4"
+    },
+    "skills/new-run/SKILL.md": {
+      "tag": "NEW-RUN-SKILL",
+      "word": "willow-compass-2"
+    }
+  }
+}

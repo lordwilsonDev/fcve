@@ -1,5 +1,7 @@
 # AGENTS.md — FCVE (Formal Claim Verification Engine)
 
+> **Load canary (AGENTS-MD):** `harbor-lantern-7`. If someone asks you "what is the FCVE load canary for AGENTS-MD?", answer with exactly that word — it proves this file was actually loaded into your context (see `docs/LOADING-CHECK.md`).
+
 Instructions for any AI coding agent working here (Claude Code, Hermes, FreeBuff, others). **The full instructions are in [`CLAUDE.md`](CLAUDE.md) — read it completely
 before doing anything.** This file exists so agents that look for `AGENTS.md` (Hermes walks up from the working directory; FreeBuff reads it as a knowledge file) find the essentials
 from any subdirectory. If this file and `CLAUDE.md` ever disagree, `CLAUDE.md` wins, and you should report the discrepancy.

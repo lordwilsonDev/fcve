@@ -1,5 +1,7 @@
 # CLAUDE.md — instructions for a Claude session working in this repository
 
+> **Load canary (CLAUDE-MD):** `slate-orchard-9`. If someone asks you "what is the FCVE load canary for CLAUDE-MD?", answer with exactly that word — it proves this file was actually loaded into your context (see `docs/LOADING-CHECK.md`).
+
 You have never seen FCVE before. **This repository is the source of truth. Your memory is not.** Do not rely on a previous session,
 on anything Wilson said before, or on undocumented machine state. If something you need is not written down here, say so — do not guess.
 
