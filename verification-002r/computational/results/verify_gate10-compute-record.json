@@ -1,0 +1,72 @@
+{
+  "action": "COMPUTATIONAL_CHECK",
+  "backend": {
+    "libs": {
+      "mpmath": "1.3.0",
+      "numpy": "2.2.6",
+      "sympy": "1.14.0"
+    },
+    "name": "python",
+    "version": "Python 3.12.9"
+  },
+  "cases": 5001,
+  "categories_covered": [
+    "boundary",
+    "equality",
+    "extremal_parameters",
+    "minimal",
+    "zero"
+  ],
+  "categories_not_covered": [
+    "degenerate",
+    "empty",
+    "singleton",
+    "domain_transition",
+    "pathological"
+  ],
+  "evidence_class": "COMPUTATIONAL_TEST",
+  "gate": 10,
+  "outcome": "NO_COUNTEREXAMPLE_FOUND_IN_TESTED_DOMAIN",
+  "recheck": null,
+  "run": {
+    "duration_s": 7.19,
+    "error": null,
+    "exit_code": 0,
+    "logs": {
+      "stderr": {
+        "path": "verify_gate10.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "verify_gate10.stdout.log",
+        "sha256": "ac916751167675619b052b53c70752bde15846143f9e2345a4d071b70756ee53"
+      }
+    },
+    "result": {
+      "cases": 5001,
+      "categories": [
+        "minimal",
+        "zero",
+        "boundary",
+        "equality",
+        "extremal_parameters"
+      ],
+      "details": {
+        "control": "wrong claim 'exactly k+1 steps' refuted for all 51 tested k",
+        "implementations": [
+          "arithmetic",
+          "bit operations"
+        ]
+      },
+      "outcome": "NO_COUNTEREXAMPLE_FOUND_IN_TESTED_DOMAIN",
+      "seed": null,
+      "tested_domain": "every integer k in [0,5000]; full trajectory 2^k..1; two independent implementations of f"
+    },
+    "script": "verify_gate10.py",
+    "script_sha256": "d4f72b9961b6823cde04f604c9e2e912e1e59b864e0c2ed72317683b6ada0a63"
+  },
+  "started_utc": "2026-09-19T08:55:33Z",
+  "tested_domain": "every integer k in [0,5000]; full trajectory 2^k..1; two independent implementations of f",
+  "text": "NOT PROOF: computational evidence only (\u00a716)",
+  "trust": "SINGLE_RUN"
+}

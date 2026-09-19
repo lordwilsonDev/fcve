@@ -1,0 +1,15 @@
+{
+  "claim_id": "CLAIM-001",
+  "reviewer": "Wilson",
+  "none_basis": "",
+  "confirmation": "CONFIRMED by Wilson on 2026-09-19 (drafted by the assistant; confirmed as written)",
+  "limitations": [
+    {
+      "id": "RL-001",
+      "scope": "TESTS",
+      "statement": "No counterexample was sought against the underlying claim about nontrivial Collatz cycles: doing so would require exhibiting an actual nontrivial cycle, which is computationally infeasible and open-problem-adjacent. The computational checks covered numeric and boundary structure only: the convergents p13, p15 and p16, both Farey identities, and the three boundary inequalities.",
+      "basis": "verification/receipt/verification-receipt.md, rows COUNTEREXAMPLE SEARCH and LIMITATIONS (Wilson's hand-written VCE-001 receipt)",
+      "short": "No counterexample was sought against the underlying nontrivial-cycle claim; that is infeasible"
+    }
+  ]
+}

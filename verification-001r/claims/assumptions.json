@@ -1,0 +1,52 @@
+{
+  "source_assumptions": [
+    {
+      "id": "SA-001",
+      "statement": "Ω is a nontrivial cycle of T (i.e. Ω is not the trivial cycle {1,2})",
+      "explicit_or_implicit": "explicit",
+      "location": "Theorem 1.1 statement, p.46"
+    },
+    {
+      "id": "SA-002",
+      "statement": "min Ω > 2^40",
+      "explicit_or_implicit": "explicit",
+      "location": "Theorem 1.1 statement, p.46"
+    },
+    {
+      "id": "SA-003",
+      "statement": "theta = log2(3) is irrational",
+      "explicit_or_implicit": "implicit -- used throughout Section 3-4's continued-fraction machinery, never proven in this paper, but is an elementary and well-known fact (3 is not a power of 2, so log2(3) cannot be rational)",
+      "location": "Section 3, p.49 onward"
+    },
+    {
+      "id": "SA-004",
+      "statement": "Standard theory of continued fractions and Farey pairs (attributed to Wallis 1685, via reference [1])",
+      "explicit_or_implicit": "implicit -- imported as background theory, not re-derived",
+      "location": "p.49"
+    }
+  ],
+  "important_non_assumption": {
+    "note": "Yoneda's computational verification of the 3x+1 conjecture up to n=2^40 (cited in the Introduction, p.45, via reference [3]) is NOT an assumption of Theorem 1.1's proof. It motivates WHY the hypothesis 'min Omega > 2^40' is the natural remaining case to study (smaller nontrivial cycles were already ruled out computationally elsewhere), but Theorem 1.1 itself is proved unconditionally given that hypothesis -- it does not rely on Yoneda's result being correct. This distinction matters for Gate 7 (semantic re-audit): a formalization that accidentally imported the computational verification as a proof dependency would be adding an assumption the paper does not require."
+  },
+  "formalization_assumptions": [
+    {
+      "id": "FA-001",
+      "statement": "A 'cycle of length L' is represented in Lean as a structure CollatzCycle L with an index type Fin L -> N and a cyclic step relation, which does NOT by itself guarantee the L indices map to L distinct integers.",
+      "why_introduced": "Lean needs an explicit, checkable representation of 'periodic orbit'; the paper's own notion of Card Omega is a set-cardinality, which requires a separate bridge to connect to an indexed representation.",
+      "disclosed_in_lean_repo": "yes -- explicitly documented via the ExactCollatzCycle structure and its injective field, plus the proved bridge lemma ExactCollatzCycle.card_eq_length (see receipts/target-eliahou-collatz-bounds.md and evidence/semantic-audit-eliahou.md from the prior verifying-lean-proofs audit this session)"
+    },
+    {
+      "id": "FA-002",
+      "statement": "Real-number computations (log2, division) are represented via Mathlib's Real.logb and instances of classical real-number axioms (propext, Classical.choice, Quot.sound).",
+      "why_introduced": "The paper's argument is stated over the reals (log2(3+1/m) etc.); Lean's formalization necessarily invokes Mathlib's real-analysis machinery to represent this.",
+      "disclosed_in_lean_repo": "yes -- axiom audit (Phase 11 of the prior session's work) found exactly these three MATHLIB_STANDARD axioms and no PROJECT_AXIOM/EXTERNAL_AXIOM"
+    }
+  ],
+  "computational_assumptions": [
+    {
+      "id": "CA-001",
+      "statement": "Table 1 and Table 2's specific large-integer values (p_13=301994, p_15=17087915, p_16=85137581, and the continued-fraction coefficients a_n) were computed by the paper's author on a 1993-era Toshiba 1600 using muLISP, per the Acknowledgements (p.56). This is a computation performed OUTSIDE Lean, by the original 1993 paper.",
+      "relevance": "The Lean formalization re-derives (or re-verifies) these specific numeric facts using norm_num/native_decide inside Lean, which is a genuinely independent recomputation -- not a copy of the paper's 1993 numbers taken on faith. This is worth stating explicitly rather than assuming the Lean proof and the 1993 paper 'must agree' because they cite the same numbers."
+    }
+  ]
+}

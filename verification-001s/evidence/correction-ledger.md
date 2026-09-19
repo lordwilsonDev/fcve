@@ -1,0 +1,22 @@
+# Correction Ledger — VCE-001 rev s
+
+## CORRECTION-001 — claims extraction EVENT-002 superseded by EVENT-013
+- **original_claim**: the delivered VCE-001 `claims.json` (EVENT-002) stated the extraction of Theorem 1.1 accurately.
+- **error**: a "fact the statement relies on" mixed up K(2^39) = p_13 with K(2^40) = p_15 in one sentence, and proof step 2 called the interval for k/l "closed-open-ish" when Theorem 2.1 gives the open interval (log2(3), log2(3+2^-40)).
+- **detection_method**: reading the extraction against the source (p.55, Theorem 2.1).
+- **root_cause**: hand-written working notes kept in the extraction.
+- **repair**: Wilson confirmed two edits (2026-09-19); the cleaned file is `claims-v2/claims.json`; EVENT-013 supersedes EVENT-002. The delivered `claims.json` is unchanged.
+- **recheck**: `validate-claims` passes; the rendered report was read.
+- **result**: RESOLVED. Nothing in the proof or conclusion changed.
+- **date**: 2026-09-19
+
+## CORRECTION-002 — Gate 9 "CHECKER_INCOMPATIBLE" (EVENT-011) superseded by EVENT-014; the recorded root cause was wrong
+- **original_claim**: EVENT-011 recorded CHECKER_INCOMPATIBLE for `results_eliahou_theorem_1_1` — "lean4export stalls on this theorem's large proof closure (reproducible, root-caused: memoization cache reset on every call in Export.lean, not a resource issue)". Repeated in the delivered VCE-001 report and in the Phase 18 correction ledger and verifying-lean-proofs skill.
+- **error**: the stated root cause was a hypothesis (the Phase 18 ledger itself called it one) that had been repeated as established fact. It is not the cause. A stack sample of the stalled exporter shows the time in `Nat.reprFast` → `toDigitsCore` → `__gmpn_divrem_1`: quadratic decimal conversion of a huge natural-number literal. The proof term contains literals of up to **25,628,966 digits** (81 literals above 50 digits). The stall was not a defect of the proof or a memoization bug, and the gap was fixable.
+- **detection_method**: re-reading the archived `sample` output while starting the Gate 9 repair, instead of trusting the recorded cause.
+- **root_cause**: (1) `lean4export` prints a natVal with `s!"{i}"`, i.e. `Nat.repr`, one digit at a time. (2) The checker, nanoda, parses the same literal with `BigUint::from_str`, also quadratic, so fixing only the exporter moved the stall to the checker (observed: `from_str_radix` at 100% CPU for 5+ minutes).
+- **repair**: two small patches, kept as diffs in `~/fcve/tool-patches/`: `lean4export-fast-natval.diff` (divide-and-conquer decimal conversion, same output as `Nat.repr`) and `nanoda-fast-decimal-parse.diff` (divide-and-conquer decimal parse, same value as `from_str`). The unpatched tools are untouched; patched copies live in `targets/lean4export-fastnat` and `targets/nanoda_lib-fastparse`. Patch diff sha256: exporter `11f0d0fc…`, checker `5f946992…`.
+- **recheck**: (a) the patched exporter's output is byte-identical to the original exporter's partial export over its first 71,147,000 bytes; (b) unit tests: exporter conversion vs `Nat.repr` on 3,000+ numbers and edge cases, 0 mismatches; checker parse vs `from_str` on 45 random strings up to 300,000 digits incl. leading zeros, all equal; (c) **regression**: the patched checker re-checks the five theorems that passed with the original checker with identical declaration counts (12012, 12809, 13639, 17320, 17301); (d) **negative control**: changing one digit of one 25.6M-digit literal in the export makes the patched checker fail (panic on a failed `def_eq`, exit 101); the untouched export passes; (e) the run itself: export complete (187,326,147 bytes, 60 s), nanoda "Checked 17464 declarations with no errors", checker axioms {propext, Quot.sound, Classical.choice} equal the Gate 6 footprint from a fresh machine-produced audit.
+- **result**: RESOLVED for Gate 9: INDEPENDENTLY_CHECKED. **Disclosed limit:** the verdict comes from patched copies of both tools. The patches touch only decimal text conversion, not the type-checking logic, and were validated as above, but they are a change to the checker's trusted input path that a reviewer may wish to inspect (the diffs are 43 and 80 lines).
+- **date**: 2026-09-19
+- **side note**: the first attempt through `independent-check.sh` failed with "failed to open configuration file" because the script `cd`s before using a relative config path when `--out` is relative. That was a tooling error, not a verdict; the run was repeated through `fcve.py independent-check` with absolute paths.

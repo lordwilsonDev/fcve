@@ -1,0 +1,237 @@
+{
+  "edges": [
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "source/original.md",
+      "to": "SOURCE-002",
+      "via_event": "EVENT-001"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "SOURCE-002",
+      "to": "CLAIM-002",
+      "via_event": "EVENT-002"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "CLAIM-002",
+      "to": "assumptions-002.json",
+      "via_event": "EVENT-003"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "CLAIM-002",
+      "to": "NORMALIZED-002",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "NORMALIZED-002",
+      "to": "FORMAL-002",
+      "via_event": "EVENT-005"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "FORMAL-002",
+      "to": "BUILD-002",
+      "via_event": "EVENT-006"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "BUILD-002",
+      "to": "AXIOMS-002",
+      "via_event": "EVENT-007"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "FORMAL-002",
+      "to": "REAUDIT-002",
+      "via_event": "EVENT-008"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "AXIOMS-002",
+      "to": "REAUDIT-002",
+      "via_event": "EVENT-008"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "NORMALIZED-002",
+      "to": "TEST-002",
+      "via_event": "EVENT-009"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "FORMAL-002",
+      "to": "TEST-002",
+      "via_event": "EVENT-009"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "AXIOMS-002",
+      "to": "INDEPCHECK-002",
+      "via_event": "EVENT-010"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "EVENT-001..EVENT-010",
+      "to": "GRAPH-002",
+      "via_event": "EVENT-011"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "GRAPH-002",
+      "to": "REPORT-002",
+      "via_event": "EVENT-012"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "GRAPH-002",
+      "to": "DECISION-002",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "INDEPCHECK-002",
+      "to": "DECISION-002",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "TEST-002",
+      "to": "DECISION-002",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "REPORT-002",
+      "to": "DECISION-002",
+      "via_event": "EVENT-013"
+    }
+  ],
+  "event_count": 13,
+  "final_event_hash": "3be5bf950b33d8c6ae295d3916dfdbc7491e4b515160d8f2b1696efcf8cf86d6",
+  "graph_sha256": "66705d978fd014309bc8f2cde2af9fd8934a088e0b4650ce9ae2695925c00123",
+  "nodes": [
+    {
+      "evidence_files": [
+        "verification-002/source/original.md",
+        "verification-002/source/source-metadata.json"
+      ],
+      "id": "SOURCE-002",
+      "produced_by_event": "EVENT-001",
+      "result": "PASS",
+      "type": "SOURCE"
+    },
+    {
+      "evidence_files": [
+        "verification-002/claims/claims.json"
+      ],
+      "id": "CLAIM-002",
+      "produced_by_event": "EVENT-002",
+      "result": "PASS",
+      "type": "CLAIM"
+    },
+    {
+      "evidence_files": [
+        "verification-002/claims/assumptions.json"
+      ],
+      "id": "assumptions-002.json",
+      "produced_by_event": "EVENT-003",
+      "result": "PASS -- no formalization assumptions of consequence (no injectivity bridge, no real-number machinery)",
+      "type": "ASSUMPTION"
+    },
+    {
+      "evidence_files": [
+        "verification-002/normalized/normalized-claim.md"
+      ],
+      "id": "NORMALIZED-002",
+      "produced_by_event": "EVENT-004",
+      "result": "MATCH",
+      "type": "NORMALIZED_CLAIM"
+    },
+    {
+      "evidence_files": [
+        "verification-002/lean/gate4-formalization-comparison.md"
+      ],
+      "id": "FORMAL-002",
+      "produced_by_event": "EVENT-005",
+      "result": "MATCH",
+      "type": "FORMAL_STATEMENT"
+    },
+    {
+      "evidence_files": [
+        "~/ico-collatz/receipts/environment.md"
+      ],
+      "id": "BUILD-002",
+      "produced_by_event": "EVENT-006",
+      "result": "PASS -- 8924/8924 jobs, exit 0, no sorry/admit",
+      "type": "BUILD"
+    },
+    {
+      "evidence_files": [
+        "prior session transcript (lake env lean AxiomProbe.lean output)"
+      ],
+      "id": "AXIOMS-002",
+      "produced_by_event": "EVENT-007",
+      "result": "PASS -- propext, Quot.sound only. NO Classical.choice (fully constructive) -- notably cleaner than VCE-001's headline theorem, consistent with \u2115-only parity/arithmetic reasoning needing no classical real-number decidability.",
+      "type": "AXIOM_AUDIT"
+    },
+    {
+      "evidence_files": [
+        "verification-002/lean/gate4-formalization-comparison.md"
+      ],
+      "id": "REAUDIT-002",
+      "produced_by_event": "EVENT-008",
+      "result": "PASS -- no undisclosed semantic change; axiom footprint itself serves as independent corroboration of the re-audit's conclusion",
+      "type": "SEMANTIC_AUDIT"
+    },
+    {
+      "evidence_files": [
+        "verification-002/computational/results/verify_powers_of_two.out"
+      ],
+      "id": "TEST-002",
+      "produced_by_event": "EVENT-009",
+      "result": "COMPUTATIONALLY_SUPPORTED -- all cases reach 1 in exactly k steps as predicted; no counterexample in tested domain",
+      "type": "ADVERSARIAL_TEST"
+    },
+    {
+      "evidence_files": [
+        "~/ico-collatz/experiments/independent-checker/soft-problem/powers_of_two_reach_one.nanoda.stdout.txt"
+      ],
+      "id": "INDEPCHECK-002",
+      "produced_by_event": "EVENT-010",
+      "result": "PASS -- Checked 1662 declarations with no errors. Axioms confirmed: propext, Quot.sound (matches Gate 6 exactly).",
+      "type": "INDEPENDENT_CHECK"
+    },
+    {
+      "evidence_files": [
+        "verification-002/evidence/evidence-graph.json"
+      ],
+      "id": "GRAPH-002",
+      "produced_by_event": "EVENT-011",
+      "result": "PASS",
+      "type": "RECEIPT"
+    },
+    {
+      "evidence_files": [
+        "verification-002/report/report.tex",
+        "verification-002/report/report.pdf"
+      ],
+      "id": "REPORT-002",
+      "produced_by_event": "EVENT-012",
+      "result": "PASS -- 0 errors, 0 undefined references (verified against rendered PDF text), 0 missing characters on first attempt",
+      "type": "RECEIPT"
+    },
+    {
+      "evidence_files": [
+        "verification-002/receipt/governance-decision.md",
+        "verification-002/receipt/verification-receipt.md"
+      ],
+      "id": "DECISION-002",
+      "produced_by_event": "EVENT-013",
+      "result": "PROMOTE -- all five layers satisfied, no disclosed gap",
+      "type": "RECEIPT"
+    }
+  ]
+}

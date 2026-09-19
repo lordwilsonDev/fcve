@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.DS_Store
+# third-party copyrighted source papers: not redistributed; their hashes are recorded in each run's ledger
+**/source/original.pdf

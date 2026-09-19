@@ -1,0 +1,22 @@
+{
+  "claim_id": "CLAIM-001",
+  "reviewer": "Wilson",
+  "none_basis": "",
+  "confirmation": "CONFIRMED by Wilson on 2026-09-19 (RL-001 confirmed earlier; RL-002 drafted by the assistant, confirmed as written)",
+  "limitations": [
+    {
+      "id": "RL-001",
+      "scope": "TESTS",
+      "statement": "No counterexample was sought against the underlying claim about nontrivial Collatz cycles: doing so would require exhibiting an actual nontrivial cycle, which is computationally infeasible and open-problem-adjacent. The computational checks covered numeric and boundary structure only: the convergents p13, p15 and p16, both Farey identities, and the three boundary inequalities.",
+      "basis": "verification/receipt/verification-receipt.md, rows COUNTEREXAMPLE SEARCH and LIMITATIONS (Wilson's hand-written VCE-001 receipt)",
+      "short": "No counterexample was sought against the underlying nontrivial-cycle claim; that is infeasible"
+    },
+    {
+      "id": "RL-002",
+      "scope": "INDEPENDENT_CHECK",
+      "statement": "The independent check (Gate 9) ran patched copies of both external tools: lean4export and nanoda with a faster decimal conversion/parse of large number literals, because this proof contains literals of up to 25.6 million digits. The patches touch text conversion only, not type-checking, and were tested (identical export prefix, five earlier passes reproduce, a corrupted literal is rejected). The patched builds exist only on the recording machine; the two diffs are published beside the run.",
+      "basis": "verification-001s/evidence/correction-ledger.md (CORRECTION-002); tool-patches/lean4export-fast-natval.diff; tool-patches/nanoda-fast-decimal-parse.diff",
+      "short": "The independent check used patched copies of lean4export and nanoda (huge-literal handling)"
+    }
+  ]
+}

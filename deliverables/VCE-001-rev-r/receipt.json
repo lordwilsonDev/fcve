@@ -1,0 +1,201 @@
+{
+  "blockers": [
+    "G9"
+  ],
+  "claim_id": "CLAIM-001",
+  "covers_through_event": "EVENT-018",
+  "covers_through_hash": "0e21d873fb6ba0504f10cead26c2f558336de543fb88411cc50c38f2615cb077",
+  "decision": "REPAIR",
+  "decision_event": "EVENT-018",
+  "decision_problems": [],
+  "fields": {
+    "AXIOM FOOTPRINT": "propext, Classical.choice, Quot.sound",
+    "BUILD RESULT": "PASS (8033/8033 jobs; see prior receipt for full log)",
+    "CLAIM": "Let \u03a9 be a nontrivial cycle of T. Provided min \u03a9 > 2^40, we have Card \u03a9 = 301994a + 17087915b + 85137581c, where a,b,c are nonnegative integers, b>0, and ac=0. In particular, the smallest admissible values for Card \u03a9 are 17087915, 17389909, 17691903, and so on.",
+    "COMPUTATIONAL TEST": "COMPUTATIONALLY_SUPPORTED -- see EVENT-010 [diagnostic, not proof]",
+    "COST": "18 ledger events; LEAN_BUILD_TIME=NOT RECORDED; COMPUTATIONAL_TEST_TIME=NOT RECORDED; CHECKER_TIME=NOT RECORDED; HUMAN_TIME, MODEL_CALL_COUNT, MODEL_COST, LATEX_BUILD_TIME=NOT RECORDED (no cost ledger, \u00a743)",
+    "COUNTEREXAMPLE SEARCH": "COMPUTATIONALLY_SUPPORTED -- all convergents (p13,p15,p16), both Farey identities, and all three boundary inequalities confirmed. Original MISMATCH was a float64 precision artifact in the test script, not a defect in the claim. [diagnostic, not proof]",
+    "FINAL DECISION": "REPAIR",
+    "GRAPH HASH": "v3 8cf85ca1ee638a781015223e8c9c0b56cc11f9f88fceb2dde1a249599a7fb835 (covers 18 events through EVENT-018)",
+    "INDEPENDENT CHECK": "CHECKER_INCOMPATIBLE for results_eliahou_theorem_1_1 specifically -- lean4export stalls on this theorem's large proof closure (reproducible, root-caused: memoization cache reset on every call in Export.lean, not a resource issue). 5 of 9 paper-facing theorems (results_eliahou_product_formula, results_farey_pair_bound, results_eliahou_product_formula_real, results_eliahou_sandwich, results_log2_three_lt_ratio) DID pass independent check cleanly.",
+    "LEAN STATEMENT": "Gate 4: MATCH",
+    "LEAN VERSION": "4.28.0",
+    "MATHLIB VERSION": "v4.28.0 pin",
+    "NORMALIZED CLAIM": "normalized/normalized-claim.md -- MATCH",
+    "REPRODUCIBILITY LEVEL": "R3 (ceiling supported by recorded evidence; NOT re-run by this tool; R5 needs full-package rebuild, not assessed)",
+    "SEMANTIC MATCH": "Gate 4: MATCH; Gate 7: PASS -- no undisclosed semantic change; Lean proves numOdd_pos rather than assuming it (stricter than paper)",
+    "SOURCE HASH": "sha256:077292bebdf53a6e06d92fb475ce395ee1c8af4cc3e9f5c2e4620b2e35134689 (source/original.pdf)",
+    "THEOREM ID": "CLAIM-001 (Theorem 1.1)"
+  },
+  "gates": [
+    {
+      "action": "SOURCE_INTAKE",
+      "event": "EVENT-001",
+      "gate": "G0",
+      "note": "",
+      "result": "PASS",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "event": "EVENT-013",
+      "gate": "G1",
+      "note": "",
+      "result": "PASS",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "ASSUMPTION_EXTRACTION",
+      "event": "EVENT-003",
+      "gate": "G2",
+      "note": "",
+      "result": "PASS",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "SEMANTIC_NORMALIZATION",
+      "event": "EVENT-004",
+      "gate": "G3",
+      "note": "",
+      "result": "MATCH",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "LEAN_FORMALIZATION_COMPARISON",
+      "event": "EVENT-005",
+      "gate": "G4",
+      "note": "",
+      "result": "MATCH",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "LEAN_BUILD",
+      "event": "EVENT-006",
+      "gate": "G5",
+      "note": "",
+      "result": "PASS (8033/8033 jobs; see prior receipt for full log)",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "AXIOM_AUDIT",
+      "event": "EVENT-007",
+      "gate": "G6",
+      "note": "",
+      "result": "PASS -- propext, Classical.choice, Quot.sound only (all MATHLIB_STANDARD); no PROJECT_AXIOM, no EXTERNAL, no UNKNOWN",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "SEMANTIC_RE_AUDIT",
+      "event": "EVENT-008",
+      "gate": "G7",
+      "note": "",
+      "result": "PASS -- no undisclosed semantic change; Lean proves numOdd_pos rather than assuming it (stricter than paper)",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "ADVERSARIAL_COMPUTATIONAL_TEST",
+      "event": "EVENT-010",
+      "gate": "G8",
+      "note": "earlier EVENT-009 recorded a failure; superseded by EVENT-010 (kept in Failure view)",
+      "result": "COMPUTATIONALLY_SUPPORTED -- all convergents (p13,p15,p16), both Farey identities, and all three boundary inequalities confirmed. Original MISMATCH was a float64 precision artifact in the test script, not a defect in the claim.",
+      "satisfied": true,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "action": "INDEPENDENT_CHECK",
+      "event": "EVENT-011",
+      "gate": "G9",
+      "note": "",
+      "result": "CHECKER_INCOMPATIBLE for results_eliahou_theorem_1_1 specifically -- lean4export stalls on this theorem's large proof closure (reproducible, root-caused: memoization cache reset on every call in Export.lean, not a resource issue). 5 of 9 paper-facing theorems (results_eliahou_product_formula, results_farey_pair_bound, results_eliahou_product_formula_real, results_eliahou_sandwich, results_log2_three_lt_ratio) DID pass independent check cleanly.",
+      "satisfied": false,
+      "status": "NO_VERDICT"
+    },
+    {
+      "action": "COMPUTATIONAL_CHECK",
+      "event": "EVENT-012",
+      "gate": "G10",
+      "note": "",
+      "result": "COMPUTATIONALLY_SUPPORTED -- see EVENT-010",
+      "satisfied": true,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "action": "EVIDENCE_GRAPH",
+      "event": "EVENT-014",
+      "gate": "G11",
+      "note": "",
+      "result": "PASS -- 17 nodes, 23 edges, GRAPH_SHA256=1be4028b133b5a3359365ea698868b2032489cc12e557f93e4538612dabb4914",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "REPORT_GENERATION",
+      "event": "EVENT-017",
+      "gate": "G12",
+      "note": "",
+      "result": "PASS -- 0 fatal errors, 0 unresolved references, 0 missing citations, 0 missing figures, 0 missing characters (tectonic, 2 passes; pdflatex named in \u00a751 was NOT used; 144 layout warnings)",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "GOVERNANCE_DECISION",
+      "event": "EVENT-018",
+      "gate": "G13",
+      "note": "",
+      "result": "REPAIR -- G9 no verdict (lean4export stalls on results_eliahou_theorem_1_1); computational evidence diagnostic only; see receipt/governance-decision.md",
+      "satisfied": true,
+      "status": "DECIDED"
+    },
+    {
+      "action": "canonical chain (\u00a72)",
+      "event": null,
+      "gate": "ORDER",
+      "note": "",
+      "result": null,
+      "satisfied": true,
+      "status": "PASS"
+    }
+  ],
+  "graph_sha256_v3": "8cf85ca1ee638a781015223e8c9c0b56cc11f9f88fceb2dde1a249599a7fb835",
+  "ledger": "/Users/lordwilson/fcve/verification-001r/evidence/event-ledger.jsonl",
+  "limitations": [
+    "G8: earlier EVENT-009 recorded a failure; superseded by EVENT-010 (kept in Failure view)",
+    "G9 (INDEPENDENT_CHECK): NO_VERDICT",
+    "12/18 events lack INPUT/OUTPUT_HASH (\u00a725; legacy events, not backfilled)",
+    "EVENT-009 uses non-\u00a716 wording (MISMATCH_FOUND); read as DIAGNOSTIC",
+    "EVENT-010 uses non-\u00a716 wording (COMPUTATIONALLY_SUPPORTED); read as DIAGNOSTIC",
+    "EVENT-012 uses non-\u00a716 wording (COMPUTATIONALLY_SUPPORTED); read as DIAGNOSTIC",
+    "No counterexample was sought against the underlying claim about nontrivial Collatz cycles: doing so would require exhibiting an actual nontrivial cycle, which is computationally infeasible and open-problem-adjacent. The computational checks covered numeric and boundary structure only: the convergents p13, p15 and p16, both Farey identities, and the three boundary inequalities (stated by Wilson)"
+  ],
+  "receipt_version": 1,
+  "repro_level": 3,
+  "sources": {
+    "AXIOM FOOTPRINT": "parsed-legacy-text:EVENT-007",
+    "BUILD RESULT": "ledger:EVENT-006",
+    "CLAIM": "claims.json",
+    "COMPUTATIONAL TEST": "ledger:EVENT-012",
+    "COST": "ledger only",
+    "COUNTEREXAMPLE SEARCH": "ledger:EVENT-010",
+    "FINAL DECISION": "ledger:GOVERNANCE_DECISION",
+    "GRAPH HASH": "derived from ledger",
+    "INDEPENDENT CHECK": "ledger:EVENT-011",
+    "LEAN STATEMENT": "ledger:EVENT-005",
+    "LEAN VERSION": "parsed-legacy-text:EVENT-006",
+    "MATHLIB VERSION": "parsed-legacy-text:EVENT-006",
+    "NORMALIZED CLAIM": "ledger:EVENT-004",
+    "REPRODUCIBILITY LEVEL": "derived: \u00a735 rules",
+    "SEMANTIC MATCH": "ledger",
+    "SOURCE HASH": "file-hash (computed now from the preserved source)",
+    "THEOREM ID": "claims.json"
+  },
+  "trust": "**Trust Statement.** The formal result was checked using Lean 4.28.0 under the pinned project environment (Mathlib v4.28.0 pin). The theorem CLAIM-001 was kernel-checked with axiom footprint propext, Classical.choice, Quot.sound. Independent checking status is CHECKER_INCOMPATIBLE for results_eliahou_theorem_1_1 specifically (no verdict: the external checker could not process this proof's export). Computational/adversarial testing produced: COMPUTATIONALLY_SUPPORTED (diagnostic only). The remaining trust limitations are: G8: earlier EVENT-009 recorded a failure; superseded by EVENT-010 (kept in Failure view); G9 (INDEPENDENT_CHECK): NO_VERDICT; 12/18 events lack INPUT/OUTPUT_HASH (\u00a725; legacy events, not backfilled); EVENT-009 uses non-\u00a716 wording (MISMATCH_FOUND); read as DIAGNOSTIC; EVENT-010 uses non-\u00a716 wording (COMPUTATIONALLY_SUPPORTED); read as DIAGNOSTIC; EVENT-012 uses non-\u00a716 wording (COMPUTATIONALLY_SUPPORTED); read as DIAGNOSTIC; No counterexample was sought against the underlying claim about nontrivial Collatz cycles: doing so would require exhibiting an actual nontrivial cycle, which is computationally infeasible and open-problem-adjacent. The computational checks covered numeric and boundary structure only: the convergents p13, p15 and p16, both Farey identities, and the three boundary inequalities (stated by Wilson). This report does not claim that computational testing constitutes formal proof or that formalization alone establishes the truth of the original informal statement.",
+  "waivers": {}
+}

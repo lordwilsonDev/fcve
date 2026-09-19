@@ -1,0 +1,92 @@
+{
+  "claims": [
+    {
+      "claim_id": "CLAIM-001",
+      "claim_type": "FORMAL",
+      "theorem_name": "Theorem 1.1",
+      "source_location": "eliahou-collatz.pdf, pages 46, 55-56",
+      "statement_verbatim": "Let Ω be a nontrivial cycle of T. Provided min Ω > 2^40, we have Card Ω = 301994a + 17087915b + 85137581c, where a,b,c are nonnegative integers, b>0, and ac=0. In particular, the smallest admissible values for Card Ω are 17087915, 17389909, 17691903, and so on.",
+      "explicit_conditions": [
+        "Ω is a nontrivial cycle of T",
+        "min Ω > 2^40"
+      ],
+      "conclusion": "Card Ω = 301994a + 17087915b + 85137581c for nonnegative integers a, b, c with b>0 and ac=0",
+      "surrounding_definitions": [
+        "T: N -> N, T(n) = n/2 if n even, (3n+1)/2 if n odd (p.45)",
+        "trajectory: Omega(n) = {n, T(n), T^(2)(n), ...} (p.45)",
+        "cycle of length k: a trajectory Omega with T^(k)(x)=x for all x in Omega, where k = Card Omega (p.45) -- 'length k' is DEFINED to equal Card Omega, not merely correlated with it",
+        "trivial cycle: Omega(1) = {1,2}, the only cycle containing 1 under the 3x+1 conjecture (p.45)",
+        "theta = log2(3), an irrational number; [a0,a1,a2,...] its continued fraction expansion (p.50)",
+        "p_n/q_n: the principal convergents to theta, defined recursively by p_n=a_n*p_{n-1}+p_{n-2}, q_n=a_n*q_{n-1}+q_{n-2} (p.51, eq 3.2)",
+        "Farey pair: (p/q),(p'/q') with pq'-p'q=+-1 (p.49)",
+        "K(m): the smallest positive integer k such that log2(3) < k/l <= log2(3+1/m) for some positive integer l (p.48, p.52)"
+      ],
+      "referenced_lemmas": ["LEMMA-001", "LEMMA-002", "LEMMA-003", "LEMMA-004"],
+      "referenced_numeric_facts": [
+        "p_13 = 301994, q_13 = 190537 (Table 1, n=13)",
+        "p_15 = 17087915, q_15 = 10781274 (Table 1, n=15)",
+        "p_16 = 85137581, q_16 = 53715833 (Table 1, n=16)",
+        "K(2^40) = p_15 = 17087915 (p.55, via Table 2's transition points: tr(13,0) near 2^39, tr(15,0) near 2^48, so K is constant at p_13=301994 on [2^39,2^48) and jumps to p_15=17087915 at 2^40 is inside that... precisely: K(2^39)=p_13=301994, K(2^40)=K(2^48)=p_15=17087915, per the paper's own worked example on p.55",
+        "p_16/q_16 < log2(3) < p_15/q_15 < log2(3+2^-40) < p_13/q_13 (p.55, from Tables 1-2)"
+      ],
+      "proof_structure": {
+        "step_1": "Corollary 2.3 (via Theorem 2.1 + definition of K,L): Card Omega >= K(min Omega), Card Omega1 >= L(min Omega)",
+        "step_2": "Set k = Card Omega, l = Card Omega1. By Theorem 2.1, k/l lies in the closed-open-ish interval [log2(3), log2(3+2^-40)]",
+        "step_3": "That interval sits strictly between three specific convergents: p_16/q_16 < log2(3) < p_15/q_15 < log2(3+2^-40) < p_13/q_13",
+        "step_4_case_split": "k/l falls into exactly one of three regions, each handled by Lemma 3.1 (Farey-pair intermediate-fraction structure): (i) k/l in (p_16/q_16, p_15/q_15) => k = p_15*b + p_16*c for some b,c in N; (ii) k/l = p_15/q_15 exactly => k = p_15*b for some b in N; (iii) k/l in (p_15/q_15, p_13/q_13) => k = p_13*a + p_15*b for some a,b in N",
+        "step_5": "Since the three cases are mutually exclusive and each includes a nonzero p_15 (=17087915) term, combining them gives Card Omega = 301994a + 17087915b + 85137581c with b>0 always, and a*c=0 because no single case ever produces both a nonzero a AND a nonzero c simultaneously"
+      }
+    },
+    {
+      "claim_id": "LEMMA-001",
+      "claim_type": "FORMAL",
+      "theorem_name": "Lemma 2.2",
+      "source_location": "eliahou-collatz.pdf, page 46",
+      "statement_verbatim": "Let Omega, Omega1 be as above, and let k = Card Omega. Then prod_{n in Omega1} (3+n^-1) = 2^k.",
+      "explicit_conditions": ["Omega is a cycle of T", "Omega1 = odd elements of Omega", "k = Card Omega"],
+      "conclusion": "prod_{n in Omega1} (3 + 1/n) = 2^k",
+      "referenced_lemmas": []
+    },
+    {
+      "claim_id": "LEMMA-002",
+      "claim_type": "FORMAL",
+      "theorem_name": "Theorem 2.1",
+      "source_location": "eliahou-collatz.pdf, page 46",
+      "statement_verbatim": "Let Omega be a cycle of T, and let Omega1 subset Omega denote the subset of its odd elements. Then log2(3+M^-1) < Card(Omega)/Card(Omega1) <= log2(3+m^-1), where M=max Omega, m=min Omega. In fact, a sharper right inequality holds: Card(Omega)/Card(Omega1) <= log2(3+mu), where mu = (1/Card Omega1) * sum_{n in Omega1} n^-1.",
+      "explicit_conditions": ["Omega is a cycle of T (not necessarily nontrivial)"],
+      "conclusion": "log2(3+M^-1) < k/k1 <= log2(3+m^-1)",
+      "referenced_lemmas": ["LEMMA-001"]
+    },
+    {
+      "claim_id": "LEMMA-003",
+      "claim_type": "FORMAL",
+      "theorem_name": "Lemma 3.1",
+      "source_location": "eliahou-collatz.pdf, page 49",
+      "statement_verbatim": "Let p/q < p'/q' be a Farey pair. Then any intermediate fraction p/q < x/y < p'/q' with y>0 is of the form x/y = (ap+bp')/(aq+bq') where a,b are positive integers. In particular, x >= p+p' and y >= q+q'.",
+      "explicit_conditions": ["(p/q),(p'/q') form a Farey pair (pq'-p'q=+-1)", "p/q < x/y < p'/q'", "y > 0"],
+      "conclusion": "x/y = (a*p+b*p')/(a*q+b*q') for positive integers a,b",
+      "referenced_lemmas": []
+    },
+    {
+      "claim_id": "LEMMA-004",
+      "claim_type": "FORMAL",
+      "theorem_name": "Corollary 2.3",
+      "source_location": "eliahou-collatz.pdf, page 48",
+      "statement_verbatim": "Let Omega be a cycle of T, and let Omega1 subset Omega denote the subset of its odd elements. Then Card Omega >= K(min Omega), Card Omega1 >= L(min Omega).",
+      "explicit_conditions": ["Omega is a cycle of T"],
+      "conclusion": "Card Omega >= K(min Omega) and Card Omega1 >= L(min Omega)",
+      "referenced_lemmas": ["LEMMA-002"]
+    },
+    {
+      "claim_id": "LEMMA-005",
+      "claim_type": "FORMAL",
+      "theorem_name": "Theorem 3.2",
+      "source_location": "eliahou-collatz.pdf, page 52",
+      "statement_verbatim": "Let theta > 0 be irrational, theta' any number with theta < theta' < [theta]+1. If k,l are positive integers with theta < k/l <= theta', and either k or l is minimal for this property, then k/l is one of the upper convergents to theta -- precisely, the largest upper convergent <= theta'.",
+      "explicit_conditions": ["theta > 0 irrational", "theta < theta' < floor(theta)+1"],
+      "conclusion": "k/l is an upper convergent to theta (used to characterize K(m), L(m) as specific convergents, enabling their computation via Table 1/2)",
+      "referenced_lemmas": ["LEMMA-003"]
+    }
+  ],
+  "notes": "Full paper now read (pages 1-3, 4-9, 10-12 of the extracted PDF, covering the paper's actual pages 45-56 in full). The complete proof structure of Theorem 1.1 is now extracted directly from the source, not paraphrased from the Lean repo's README. This lets Gate 4 (Lean formalization comparison) check the Lean proof's actual case-split structure (Collatz/LinearForm.lean's farey_15_16, farey_13_15 etc.) against this exact three-case argument, rather than only checking the final numeric coefficients."
+}

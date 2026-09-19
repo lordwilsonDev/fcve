@@ -1,0 +1,19 @@
+{
+  "source_assumptions": [
+    {
+      "id": "SA-001",
+      "statement": "k is a natural number, k >= 0",
+      "explicit_or_implicit": "explicit"
+    }
+  ],
+  "formalization_assumptions": [
+    {
+      "id": "FA-001",
+      "statement": "'iterating f m times' is represented via Mathlib's Function.iterate (f^[m]), a standard, well-understood construction with no hidden semantics beyond repeated function application",
+      "why_introduced": "Lean needs an explicit representation of 'apply f repeatedly'",
+      "disclosed_in_lean_repo": "yes -- Function.iterate is a standard Mathlib definition, not a project-specific construction"
+    }
+  ],
+  "computational_assumptions": [],
+  "notes": "No formalization assumptions of the kind seen in VCE-001 (no injectivity bridge, no real-number coercions) -- this claim is purely about natural numbers and a standard library iteration construct. This is expected for an elementary claim and is itself informative: the ABSENCE of formalization assumptions is a property of this specific claim's simplicity, not evidence that formalization assumptions are generally unimportant."
+}

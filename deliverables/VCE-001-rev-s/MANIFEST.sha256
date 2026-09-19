@@ -1,0 +1,11 @@
+8c65cd91080bf18ce9f0e6fef385048dc0c369307a7673548362f247f27cbc65  ./ISSUE-NOTE.md
+f000cf1377980a51bce8420d77fd3da86ff213269e32ffdca2eb1afa006b48e5  ./correction-ledger.md
+f0746732e74af0b8840c8f1e758487aeb79d97305ae48ff14dccababaced9c7e  ./event-ledger.jsonl
+5f77e929d8eff18b0382af7b7c4fb288c0f821cd0fde399d83d5520fbf84fc81  ./governance-decision.md
+9592a2260dc6c63fbe55daea3a672558de2ebedcbd8ec46b5837fea9499eca7e  ./independent-check-record.json
+a543a0d1153b5a5ef4a7974f6d93400288ab854bbf1879dbf7f8c360ef5207a8  ./receipt.json
+193684fcee4e66d78dbfbcce0cde1108d64fb5053addf0a01d6abd6d0a79e5a5  ./report.pdf
+1706d25f263b3d5fab899fa34be8205b7d954bf76679c4b379278be2f16c92c9  ./report.tex
+11f0d0fcd591eaf29d754fe45fb17aea153c9b0339d44d0735b311f68d0f6c60  ./tool-patches/lean4export-fast-natval.diff
+5f9469927cb14ec17e5d7f36ace5c1f2093fe5e9fd07e450f2e8c70a63e1bf92  ./tool-patches/nanoda-fast-decimal-parse.diff
+dfc8bc33735b3cd62a6500c7bc835b7d1a004e4b2abf5d32cf29095a010f01d0  ./verification-receipt.md

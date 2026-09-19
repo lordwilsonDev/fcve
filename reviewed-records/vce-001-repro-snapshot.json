@@ -1,0 +1,61 @@
+{
+  "captured_utc": "2026-09-19T09:26:04Z",
+  "caveat": "Captured after the run, not during it. It describes the project as it is now; it does not prove what the original run built.",
+  "cwd": "/Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds",
+  "environment": {
+    "lake_manifest_sha256": "116c6ef00aa899fb38c08c5e4c92c0e434d0e7f9d574fcb5d4d42cc90ffb07cb",
+    "lake_version": "Lake version 5.0.0-src+7e01a1b (Lean version 4.28.0)",
+    "lean_toolchain_file": "leanprover/lean4:v4.28.0",
+    "lean_version_actual": "Lean (version 4.28.0, arm64-apple-darwin24.6.0, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+    "mathlib_rev": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "packages": {
+      "Cli": {
+        "rev": "4f10f47646cb7d5748d6f423f4a07f98f7bbcc9e",
+        "url": "https://github.com/leanprover/lean4-cli"
+      },
+      "LeanSearchClient": {
+        "rev": "c5d5b8fe6e5158def25cd28eb94e4141ad97c843",
+        "url": "https://github.com/leanprover-community/LeanSearchClient"
+      },
+      "Qq": {
+        "rev": "b8f98e9087e02c8553945a2c5abf07cec8e798c3",
+        "url": "https://github.com/leanprover-community/quote4"
+      },
+      "aesop": {
+        "rev": "f642a64c76df8ba9cb53dba3b919425a0c2aeaf1",
+        "url": "https://github.com/leanprover-community/aesop"
+      },
+      "batteries": {
+        "rev": "495c008c3e3f4fb4256ff5582ddb3abf3198026f",
+        "url": "https://github.com/leanprover-community/batteries"
+      },
+      "importGraph": {
+        "rev": "85b59af46828c029a9168f2f9c35119bd0721e6e",
+        "url": "https://github.com/leanprover-community/import-graph"
+      },
+      "mathlib": {
+        "rev": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+        "url": "https://github.com/leanprover-community/mathlib4.git"
+      },
+      "plausible": {
+        "rev": "55c8532eb21ec9f6d565d51d96b8ca50bd1fbef3",
+        "url": "https://github.com/leanprover-community/plausible"
+      },
+      "proofwidgets": {
+        "rev": "be3b2e63b1bbf496c478cef98b86972a37c1417d",
+        "url": "https://github.com/leanprover-community/ProofWidgets4"
+      }
+    }
+  },
+  "expect_commit": "db804ce6",
+  "git": {
+    "dirty": false,
+    "dirty_files": [],
+    "is_repo": true,
+    "remote_url": "https://github.com/tangentstorm/eliahou-collatz-bounds.git",
+    "revision": "db804ce6305ea99a817f067869607f8b677d895a"
+  },
+  "kind": "repro_snapshot",
+  "revision_matches_expected": true,
+  "state": "CLEAN_AT_COMMIT"
+}

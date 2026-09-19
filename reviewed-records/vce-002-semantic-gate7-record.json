@@ -1,0 +1,58 @@
+{
+  "bridge_verdict": "FAITHFUL",
+  "bridge_justification": "Gate 4 records the Lean statement as a direct transliteration of the normalized claim (same function, domain, quantifiers, conclusion) and the proof's induction structure matches the normalized argument step for step. The Gate 7 re-audit found no undisclosed change, and the axiom footprint contains no classical assumption.",
+  "reviewer": "Wilson",
+  "gate": "GATE7",
+  "claim_id": "CLAIM-002",
+  "status": "CLEAN",
+  "checks": {
+    "added_hypotheses": {
+      "finding": "NONE",
+      "detail": "The Lean theorem has no hypothesis beyond the binder k : N; the normalized claim's only given is k in N."
+    },
+    "removed_hypotheses": {
+      "finding": "NONE",
+      "detail": "The normalized claim's single given (k in N) is the theorem's binder."
+    },
+    "strengthened_conclusion": {
+      "finding": "NONE",
+      "detail": "Conclusion is the same: exists m, f^[m](2^k) = 1 (Gate 4: 'exact match')."
+    },
+    "weakened_conclusion": {
+      "finding": "NONE",
+      "detail": "Same conclusion, same quantifier order (forall k, exists m)."
+    },
+    "changed_domains": {
+      "finding": "NONE",
+      "detail": "k, m and all values are N in both (Gate 4: 'Altered domain: No')."
+    },
+    "coercions": {
+      "finding": "NONE",
+      "detail": "Pure N arithmetic; Gate 4: 'None needed'."
+    },
+    "finite_infinite_substitution": {
+      "finding": "NONE",
+      "detail": "No finiteness assumption in either statement."
+    },
+    "extensionality_assumptions": {
+      "finding": "NONE",
+      "detail": "The statement uses no extensionality; propext appears in the proof's footprint (Gate 6) and does not affect the statement's meaning."
+    },
+    "injectivity_assumptions": {
+      "finding": "NONE",
+      "detail": "No injectivity or encoding is involved; the object is a plain function on N."
+    },
+    "decidability_assumptions": {
+      "finding": "NONE",
+      "detail": "collatzStep branches on n % 2 = 0, a computable test on N; footprint has no Classical.choice."
+    },
+    "classical_assumptions": {
+      "finding": "NONE",
+      "detail": "Footprint is propext, Quot.sound only (Gate 6): fully constructive, no Classical.choice."
+    }
+  },
+  "signal_dispositions": {},
+  "provenance": "Drafted by the assistant from verification*/lean/gate4-formalization-comparison.md, gate7-semantic-reaudit.md (VCE-001) and normalized/normalized-claim.md. Drafted by the assistant; confirmed by Wilson 2026-09-19.",
+  "confirmation": "CONFIRMED by Wilson in chat on 2026-09-19. Drafted by the assistant (Claude) from the run's own Gate 4/Gate 7 files; the verdict is Wilson's.",
+  "drafted_by": "assistant (Claude)"
+}

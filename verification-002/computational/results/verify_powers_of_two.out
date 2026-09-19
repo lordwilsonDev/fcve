@@ -1,0 +1,45 @@
+k, 2^k, steps_to_reach_1
+0, 1, 0
+1, 2, 1
+2, 4, 2
+3, 8, 3
+4, 16, 4
+5, 32, 5
+6, 64, 6
+7, 128, 7
+8, 256, 8
+9, 512, 9
+10, 1024, 10
+11, 2048, 11
+12, 4096, 12
+13, 8192, 13
+14, 16384, 14
+15, 32768, 15
+16, 65536, 16
+17, 131072, 17
+18, 262144, 18
+19, 524288, 19
+20, 1048576, 20
+50, 2^50, 50
+100, 2^100, 100
+500, 2^500, 500
+1000, 2^1000, 1000
+
+--- Sanity check: for k>=0, steps should be exactly k (2^k -> 2^(k-1) -> ... -> 2^0=1) ---
+k=0: steps=0, expected=0 -> MATCH
+k=1: steps=1, expected=1 -> MATCH
+k=2: steps=2, expected=2 -> MATCH
+k=3: steps=3, expected=3 -> MATCH
+k=4: steps=4, expected=4 -> MATCH
+k=5: steps=5, expected=5 -> MATCH
+k=6: steps=6, expected=6 -> MATCH
+k=7: steps=7, expected=7 -> MATCH
+k=8: steps=8, expected=8 -> MATCH
+k=9: steps=9, expected=9 -> MATCH
+k=10: steps=10, expected=10 -> MATCH
+k=11: steps=11, expected=11 -> MATCH
+k=12: steps=12, expected=12 -> MATCH
+k=13: steps=13, expected=13 -> MATCH
+k=14: steps=14, expected=14 -> MATCH
+
+OVERALL: ALL CHECKS PASS

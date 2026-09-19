@@ -1,0 +1,24 @@
+Continued fraction terms a_0..a_19: [1, 1, 1, 2, 2, 3, 1, 5, 2, 23, 2, 2, 1, 1, 55, 1, 4, 3, 1, 1]
+p_13 = 301994, q_13 = 190537
+p_14 = 16785921, q_14 = 10590737
+p_15 = 17087915, q_15 = 10781274
+p_16 = 85137581, q_16 = 53715833
+
+--- Checking against Eliahou's paper (Table 1, p.53) ---
+p_13: expected 301994, independently recomputed 301994 -> MATCH
+p_15: expected 17087915, independently recomputed 17087915 -> MATCH
+p_16: expected 85137581, independently recomputed 85137581 -> MATCH
+
+--- Checking Farey identities used in Collatz/LinearForm.lean ---
+farey_15_16: p15*q16 - p16*q15 = 1 (Lean claims 17087915*53715833 - 85137581*10781274 = 1)
+farey_13_15: p13*q15 - p15*q13 = 1 (used analogously in Lean)
+
+--- Adversarial / boundary checks (exact rational vs. high-precision theta) ---
+p16/q16 = 1.58496250072115608818725756333332855510218002204303524437571
+log2(3) = 1.58496250072115618145373894394781650875981440769248106045575
+p15/q15 = 1.58496250072115781492984966340712609660045742274985312496464
+p16/q16 < log2(3) ? True
+log2(3) < p15/q15 ? True
+p15/q15 < p13/q13 ? True
+
+OVERALL: ALL CHECKS PASS

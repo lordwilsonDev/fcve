@@ -1,0 +1,83 @@
+{
+  "bridge_verdict": "FAITHFUL WITH EXPLICIT REPRESENTATIONAL DIFFERENCE",
+  "bridge_justification": "Gate 4 records MATCH with one structural difference, injectivity: the injectivity hypothesis exactly closes the gap between Lean's more general indexed structure and the paper's definition, so the theorem is neither weakened nor strengthened relative to the paper. The proof also implements the paper's own three-case Farey-pair argument. The remaining disclosed items are the R/Q intermediate steps in the proof and Classical.choice in the footprint.",
+  "reviewer": "Wilson",
+  "difference_disclosure": {
+    "informal_meaning": "Omega is a set of distinct positive integers forming a cycle of the compressed Collatz map T, and the paper defines the cycle's length k to equal Card Omega (p.45).",
+    "lean_representation": "cyc : CollatzCycle L, an L-indexed sequence cyc.seq (period L, repetitions allowed); Omega is the Finset (Finset.univ.image cyc.seq) and Card Omega is its .card.",
+    "why_encoding_valid": "With hinj : Function.Injective cyc.seq the indexing is exactly Lean's ExactCollatzCycle (injective indexing), which is what a paper 'cycle' inherently is; Gate 4 notes this was confirmed independently.",
+    "where_preserved": "Card Omega is the .card of the image finset in the conclusion; injectivity is what makes that image's size equal the period L.",
+    "literal_or_transported": "Literal on the image finset: the conclusion states an equality of natural numbers about (Finset.univ.image cyc.seq).card. The step from the paper's set Omega to the indexed sequence is the representational choice, not a transport through an equivalence.",
+    "assumptions": "hinj (injective indexing) as an explicit theorem hypothesis, and hmin : 2^40 < cyc.minElem for the paper's minimum condition."
+  },
+  "gate": "GATE7",
+  "claim_id": "CLAIM-001",
+  "status": "DISCLOSED",
+  "checks": {
+    "added_hypotheses": {
+      "finding": "FOUND",
+      "detail": "hinj : Function.Injective cyc.seq is an extra hypothesis of the Lean theorem that the paper does not state (Gate 4: 'Extra hypothesis'); it is the encoding hypothesis, see Section 31 disclosure.",
+      "disclosed": true
+    },
+    "removed_hypotheses": {
+      "finding": "NONE",
+      "detail": "The paper's two conditions are present: min Omega > 2^40 is hmin; nontriviality is implied by it, since the trivial cycle {1,2} has minimum 1."
+    },
+    "strengthened_conclusion": {
+      "finding": "NONE",
+      "detail": "Same conclusion: exists a,b,c >= 0 with b>0, ac=0 and Card = 301994a + 17087915b + 85137581c (Gate 4: no changed quantifier or equality)."
+    },
+    "weakened_conclusion": {
+      "finding": "NONE",
+      "detail": "Same conclusion; Gate 4 records the theorem is neither weaker nor stronger apart from the injectivity note."
+    },
+    "changed_domains": {
+      "finding": "NONE",
+      "detail": "a, b, c and the cardinality are N in both."
+    },
+    "coercions": {
+      "finding": "FOUND",
+      "detail": "The proof passes through R/Q intermediate steps (rat_of_real_div_lt) that the paper does not need; this is in the proof, not in the headline statement, and Gate 4 records it as a formalization convenience because the convergents are already rational.",
+      "disclosed": true
+    },
+    "finite_infinite_substitution": {
+      "finding": "NONE",
+      "detail": "Omega is finite in both; Lean represents it as Finset.univ.image cyc.seq."
+    },
+    "extensionality_assumptions": {
+      "finding": "NONE",
+      "detail": "The statement uses no extensionality; propext is in the standard footprint (Gate 6)."
+    },
+    "injectivity_assumptions": {
+      "finding": "FOUND",
+      "detail": "hinj : Function.Injective cyc.seq. The paper defines cycle length k as Card Omega (p.45); Lean's CollatzCycle L is an L-indexed sequence that may repeat elements, so injectivity is required to identify L with Card Omega.",
+      "disclosed": true
+    },
+    "decidability_assumptions": {
+      "finding": "NONE",
+      "detail": "No Decidable/decide is used in the statement."
+    },
+    "classical_assumptions": {
+      "finding": "FOUND",
+      "detail": "Classical.choice is in the axiom footprint (Gate 6). The Gate 7 note attributes it to ordinary real-number order decidability (Real.logb, lt_trichotomy), as in any Mathlib real-analysis argument.",
+      "disclosed": true
+    }
+  },
+  "signal_dispositions": {
+    "injectivity": {
+      "disposition": "DISCLOSED",
+      "note": "hinj is the encoding hypothesis; see the Section 31 disclosure."
+    },
+    "finite_structure": {
+      "disposition": "NO CHANGE",
+      "note": "Omega is finite in the paper; Lean uses a Finset image."
+    },
+    "strictness": {
+      "disposition": "CHECKED",
+      "note": "Gate 7 confirmed strict/non-strict directions match the paper (< on the left, <= on the right)."
+    }
+  },
+  "provenance": "Drafted by the assistant from verification*/lean/gate4-formalization-comparison.md, gate7-semantic-reaudit.md (VCE-001) and normalized/normalized-claim.md. Drafted by the assistant; confirmed by Wilson 2026-09-19.",
+  "confirmation": "CONFIRMED by Wilson in chat on 2026-09-19. Drafted by the assistant (Claude) from the run's own Gate 4/Gate 7 files; the verdict is Wilson's.",
+  "drafted_by": "assistant (Claude)"
+}

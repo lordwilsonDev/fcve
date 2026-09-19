@@ -1,0 +1,103 @@
+# FCVE handoff — state as of 2026-09-19 (end of the session that built spec §60 steps 2-12)
+
+Supersedes `reports/HANDOFF.md` (the earlier handoff, kept as history). Full running log with reasoning:
+`~/Documents/Vault/10_Projects/BlackSwanLabz/BlackSwanLabz-FCVE-Spec.md`. Governing spec: `SPECIFICATION.md` (62 sections).
+
+## One paragraph
+FCVE turns a math claim into an auditable evidence package (source → claims → normalization → Lean → build → axiom audit →
+semantic re-audit → computational tests → independent check → graph → report → governance decision) and never collapses it to
+"VERIFIED". **All twelve steps of the spec's §60 build order now exist as tested code** (12 suites, 258 tests, all pass). Two
+theorems have been run by hand (VCE-001 = REPAIR, VCE-002 = PROMOTE); VCE-002 has a corrected re-run (`verification-002r`) with a
+recorded PROMOTE and an issued deliverable. What is left is mostly decisions and data gaps, not missing machinery.
+
+## Read these first, in this order
+1. This file. 2. The vault note above (long; the last ~120 lines are this session). 3. `deliverables/VCE-002-rev-r/ISSUE-NOTE.md`.
+
+## Layout
+- `scripts/` — `fcve.py` (CLI) plus one module per gate: `fcve_evidence` (ledger, hash chain, gate order), `fcve_claims` (G1/G2),
+  `fcve_lean` (G5 build + reproduction snapshot), `fcve_axioms` (G6), `fcve_semantic` (G3/4/7 + bridge verdict), `fcve_compute`
+  (G8/G10), `fcve_independent` (G9), `fcve_graph` (G11, schema v3), `fcve_receipt`, `fcve_report` (G12 LaTeX), `fcve_limits`
+  (reviewer limitations), `fcve_batch` (step 12). `append-event.py` / `build-evidence-graph.py` are the ORIGINAL manual scripts, kept
+  only because they reproduce the delivered runs' hashes.
+- `tests/test_fcve_*.py` — run one with `python3 tests/test_fcve_report.py`. All 12 pass. Lean/axiom/batch tests need `lake` and the
+  Lean v4.34.0 toolchain; report tests need `tectonic`.
+- Runs: `verification/` (VCE-001, delivered), `verification-002/` (VCE-002, delivered), `verification-002r/` (VCE-002 re-run),
+  `verification-002r-attempt1-superseded/` (first attempt, kept + README), `deliverables/VCE-002-rev-r/` (issued package + MANIFEST.sha256).
+- `reviewed-records/` = human-CONFIRMED: both Gate 7 bridge records, VCE-001 repro snapshot. `proposed-records/` = drafted by the
+  assistant, NOT confirmed: both reviewer-limitations records.
+- CLI subcommands: append verify validate-claims scaffold lean-build axiom-audit semantic-check scaffold-semantic compute-run
+  independent-check batch-plan batch-run report receipt receipt-check scaffold-limitations limitations-check repro-snapshot graph
+  graph-check graph-view. `fcve.py <cmd> -h` for flags.
+
+## State of each run
+| Run | Ledger | Decision | Notes |
+|---|---|---|---|
+| VCE-001 (delivered) | 15 events; chain OK; `verify` flags ORDER (decision before report — disclosed in its own correction ledger) | REPAIR | G9 has no verdict (lean4export stalls on the headline proof); legacy events have no §25 hashes |
+| VCE-002 (delivered) | 13 events, canonical | PROMOTE | **No Gate 10 event** → PROMOTE not supported by §53 read literally; report lacked Semantic Bridge + appendices and printed PROMOTE before it was recorded. Untouched. |
+| `verification-002r` | 18 events, canonical, graph + receipt current | **PROMOTE (Wilson's)** | Replays VCE-002 events 1-10 (hashes identical), real Gate 10 (5,001 cases + control), fresh graph/report. Superseded events 013-016 kept. Receipt: no problems, no blockers, R4. |
+
+## Decisions Wilson made (do not relitigate)
+- Gate 12/13 naming: Report Generation = 12, Governance Decision = 13.
+- Graph schema: new runs use v3; legacy v1 kept ONLY so delivered hashes reproduce (VCE-001 `0c93…`, VCE-002 `6670…`).
+- Q12 (§61): **option 3** — the report states what the evidence PERMITS, never the decision; the decision lives in the receipt.
+- Bridge verdicts confirmed: VCE-001 FAITHFUL WITH EXPLICIT REPRESENTATIONAL DIFFERENCE; VCE-002 FAITHFUL (both "Set by Wilson").
+- VCE-002 Gate 10: run for real (not waived), in a NEW run; PROMOTE recorded and re-affirmed on the regenerated report.
+- The corrected VCE-002 report was issued as a NEW revision beside the delivered one; delivered files not replaced.
+
+## How the work is done here (rules that mattered)
+- **The ledger is append-only.** Fix a mistake by appending a superseding event + a correction entry, never by editing. Archive, don't delete.
+- **Never modify delivered runs** (`verification/`, `verification-002/`). Regeneration goes to scratch or a new run.
+- **Ask Wilson for verdicts and other judgments** (decision, bridge verdict, limitations). He answers briefly ("confirm", "PROMOTE"). A
+  model may draft but cannot certify its own proposal (§44) — records name the reviewer; model names render as PROPOSED.
+- **Read the rendered PDF as a mathematician before trusting or issuing a report.** Most bugs this session (false "none recorded",
+  circular G12 blocker, `\S 53` literal, dangling edges) were caught by reading output, not by tests.
+- Tectonic exits 0 while dropping glyphs / leaving undefined refs; the compile check parses the `.log`. This machine has `tectonic`,
+  NOT `pdflatex` (§51 names pdflatex; records say so).
+- **Vault writes:** a PreToolUse hook (`require-verified-claims.sh`) false-positives on the word "commit" in Bash heredocs. Use the
+  Edit/Write tools for vault notes instead.
+
+## Update — Gate 9 closed (2026-09-19, later)
+- Cause of the VCE-001 Gate 9 stall was NOT memoization: it is quadratic decimal conversion of nat literals up to 25.6M digits (exporter print, then nanoda parse). Two patches in `tool-patches/`; patched builds at `~/ico-collatz/targets/{lean4export-fastnat,nanoda_lib-fastparse}`. Validated: identical export prefix, 5 earlier passes reproduce, corrupted literal rejected.
+- New run `verification-001s/` (17 events): fresh Gate 6 audit, EVENT-014 = INDEPENDENTLY_CHECKED (17,464 decls, axioms match), graph, report EVENT-017, R4. Report says the evidence permits PROMOTE. **No decision, no receipt, not issued — G13 is Wilson's.** `verification-001r` (REPAIR) untouched.
+- RL-002 confirmed by Wilson; report final EVENT-018. **PROMOTE recorded (Wilson's, EVENT-019)**, receipt current (no blockers, R4), package assembled: `deliverables/VCE-001-rev-s/` (ISSUE-NOTE, MANIFEST, tool-patches). VCE-001 is now PROMOTE on `verification-001s`; rev r (REPAIR) and the delivered run are superseded but untouched.
+- Logged in `~/.claude/skills/verifying-lean-proofs/BUGS.md` (BUG-002/003).
+
+## Open items (recommended order)
+1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
+   `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered
+   reports still print "proposed" — they pick up the confirmed records only when regenerated with `--limitations-record`.
+2. ~~`claims.json` clean-up (VCE-001)~~ — **DONE 2026-09-19**: Wilson confirmed 2 edits (K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval now open (log2 3, log2(3+2^-40))). Confirmed file: `reviewed-records/vce-001-claims-cleaned.json`; delivered `claims.json` untouched. Goes into the corrected VCE-001 run via a superseding event (item 3). Original problem: one "fact the statement relies on" is stream-of-consciousness prose; §3 says "closed-open-ish".
+   It is Wilson's delivered extraction — his call. Sections 1-3 also show plain-text math because claims.json isn't `$…$`.
+3. ~~**Corrected VCE-001 deliverable**~~ — **DONE 2026-09-19**: `verification-001r/` (18 events, REPAIR = Wilson's EVENT-018, receipt current, blocker G9, R3), package `deliverables/VCE-001-rev-r/` (ISSUE-NOTE + MANIFEST). Attempt 1 archived. Real next step: close Gate 9 (lean4export stalls on `results_eliahou_theorem_1_1`). Original plan was: replay events 1-12, then graph, report, THEN decision (Wilson's; REPAIR expected —
+   G9 still no verdict). Use `--repro-snapshot`, `--bridge-record`, `--limitations-record` (or put them in a manifest).
+4. VCE-001 Q8 stays partial (legacy results carry no tested domain). VCE-002 project has NO commit and NO remote (8 untracked files),
+   **UPDATE 2026-09-19: Wilson had the project committed** — `~/ico-collatz/ico_collatz_verification` HEAD `409c4c3b6f0179ae9131ac2450998e59a7fb1132` (13 files, no remote, `.lake/` ignored). Caveat: committed AFTER the VCE-002 runs, so it identifies the source as it is now, not proof of what was built then (same caveat as VCE-001's snapshot). **Snapshot taken 2026-09-19:** `proposed-records/vce-002-repro-snapshot.json` (CLEAN_AT_COMMIT 409c4c3, no remote, Lean 4.34.0, Mathlib 5ed29652…, captured by the tool; not yet used in any report). **Corrected VCE-002 built (pre-decision): `verification-002s/`** — events 1-11 of 002r replayed (hashes identical, graph hash unchanged `611fea5b…`), graph EVENT-012, final report EVENT-015 (cites the snapshot; commit shown, local-only). 15 events, chain OK. **PROMOTE re-affirmed by Wilson (EVENT-016), receipt current (no blockers, R4), package `deliverables/VCE-002-rev-s/` assembled (ISSUE-NOTE, MANIFEST).** (Was pending: `verification-002r`/`deliverables/VCE-002-rev-r/` untouched). Tool bug found reading the PDF and fixed (local-only commit was called 'not recorded'; regression test added; report suite 62 tests OK).
+   so its reproduction can never be answered by a snapshot unless Wilson commits the project.
+5. Trust Statement of VCE-001 is long (7 items, each real) — trim only if Wilson asks.
+6. Batch (`batch-run`) has never been run on a real Mathlib project (only tiny fixtures); no parallelism/retries/`--clean-room`.
+
+## Environment warnings
+- **Disk: 2.7 GiB free (82%)**, down from 4.7 GiB at the start of the session. The wrapper's own build floor is 3 GB, so real `lean-build`
+  runs will REFUSE (tests pin a small floor). Not caused by FCVE (its scratch is MBs). Likely cause: `~/msb-backups/msb-v3/` grows ~1 GB/day
+  (7 backups = 7.0 GB, 08:00Z job). Big items: `~/ico-collatz/ico_collatz_verification` 7.9 GB, `targets` 7.4 GB, `~/.elan` 5.1 GB. Nothing was deleted.
+- `~/.claude/skills/verifying-lean-proofs/` holds the standing rule "never trust a repo's self-description; check `git log` for staleness".
+- Scratch used this session: `/tmp/claude-501/scratch/` (disposable).
+
+## Quick commands
+```bash
+cd ~/fcve
+for t in evidence claims lean axioms semantic compute independent graph receipt report batch limits; do python3 tests/test_fcve_$t.py 2>&1 | tail -1; done
+python3 scripts/fcve.py verify verification-002r/evidence/event-ledger.jsonl
+python3 scripts/fcve.py receipt-check verification-002r/evidence/event-ledger.jsonl verification-002r/receipt/receipt.json
+python3 scripts/fcve.py batch-plan <manifest.json>          # read-only status of every theorem
+# regenerate a report for regression (delivered ledgers already have a decision, hence --allow-post-decision):
+python3 scripts/fcve.py report verification/evidence/event-ledger.jsonl /tmp/out --allow-post-decision \
+  --bridge-record reviewed-records/vce-001-semantic-gate7-record.json --repro-snapshot reviewed-records/vce-001-repro-snapshot.json \
+  --limitations-record proposed-records/vce-001-reviewer-limitations.json \
+  --lean ~/ico-collatz/targets/eliahou-collatz-bounds/Results.lean:results_eliahou_theorem_1_1
+```
+
+## What is NOT proven (be honest with Wilson)
+The tools were validated against two real runs and fixtures, not at scale. Semantic judgments (claim extraction, normalization, Gate 4/7,
+bridge verdict, limitations, governance) are human; the tool checks completeness and consistency only. Reproducibility levels are
+ceilings supported by recorded evidence — nothing was re-run to earn R3/R4. Computational evidence is diagnostic, never proof.

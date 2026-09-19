@@ -1,0 +1,493 @@
+{
+  "edges": [
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "assumptions.json",
+      "to": "CLAIM-001",
+      "via_event": "EVENT-003"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "CLAIM-001",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "LEMMA-001",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "LEMMA-002",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "LEMMA-003",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "LEMMA-004",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "LEMMA-005",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "NORMALIZED-001",
+      "to": "FORMAL-001",
+      "via_event": "EVENT-005"
+    },
+    {
+      "edge_type": "PRODUCES",
+      "from": "FORMAL-001",
+      "to": "BUILD-001",
+      "via_event": "EVENT-006"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "AXIOMS-001",
+      "to": "BUILD-001",
+      "via_event": "EVENT-007"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "REAUDIT-001",
+      "to": "FORMAL-001",
+      "via_event": "EVENT-008"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "REAUDIT-001",
+      "to": "AXIOMS-001",
+      "via_event": "EVENT-008"
+    },
+    {
+      "edge_type": "CONTRADICTS",
+      "from": "TEST-001",
+      "to": "NORMALIZED-001",
+      "via_event": "EVENT-009"
+    },
+    {
+      "edge_type": "CONTRADICTS",
+      "from": "TEST-001",
+      "to": "FORMAL-001",
+      "via_event": "EVENT-009"
+    },
+    {
+      "edge_type": "REPAIRS",
+      "from": "TEST-001-CORRECTED",
+      "to": "TEST-001",
+      "via_event": "EVENT-010"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "INDEPCHECK-001",
+      "to": "AXIOMS-001",
+      "via_event": "EVENT-011"
+    },
+    {
+      "edge_type": "TESTS",
+      "from": "COMPTEST-001",
+      "to": "TEST-001-CORRECTED",
+      "via_event": "EVENT-012"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "CLAIM-001",
+      "to": "SOURCE-001",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "LEMMA-001",
+      "to": "SOURCE-001",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "LEMMA-002",
+      "to": "SOURCE-001",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "LEMMA-003",
+      "to": "SOURCE-001",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "LEMMA-004",
+      "to": "SOURCE-001",
+      "via_event": "EVENT-013"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "LEMMA-005",
+      "to": "SOURCE-001",
+      "via_event": "EVENT-013"
+    }
+  ],
+  "event_count": 13,
+  "external_inputs": [
+    {
+      "event": "EVENT-001",
+      "token": "eliahou-collatz.pdf (from tangentstorm/eliahou-collatz-bounds @ db804ce6)"
+    },
+    {
+      "event": "EVENT-004",
+      "token": "assumptions.json"
+    }
+  ],
+  "final_event_hash": "cd008f36e87f5eb8bcfd0a54e1e5fa57217c4d32516fc1c368e7ba98f5b4df98",
+  "graph_sha256": "eab8801b1fe15c69dabed02bb6a97999c1b98ab4b7be56f5aeff7d3b45abf211",
+  "nodes": [
+    {
+      "action": "SOURCE_INTAKE",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "source/original.pdf",
+        "source/source-metadata.json"
+      ],
+      "id": "SOURCE-001",
+      "input_hash": null,
+      "method": "shasum -a 256, byte copy",
+      "output_hash": null,
+      "produced_by_event": "EVENT-001",
+      "reason": "Gate 0: preserve the original claim source byte-for-byte before any interpretation begins",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:30:59Z",
+      "type": "SOURCE",
+      "verdict": null
+    },
+    {
+      "action": "ASSUMPTION_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "claims/assumptions.json"
+      ],
+      "id": "assumptions.json",
+      "input_hash": null,
+      "method": "Manual analysis of source text vs. prior session's Lean audit findings",
+      "output_hash": null,
+      "produced_by_event": "EVENT-003",
+      "reason": "Gate 2: distinguish source assumptions from formalization assumptions; explicitly flag a non-assumption (Yoneda's computational verification) that could be mistakenly imported as a dependency",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:33:12Z",
+      "type": "ASSUMPTION",
+      "verdict": null
+    },
+    {
+      "action": "SEMANTIC_NORMALIZATION",
+      "actor": "wilson+claude",
+      "evidence_class": "HUMAN_REVIEW",
+      "evidence_files": [
+        "normalized/normalized-claim.md"
+      ],
+      "id": "NORMALIZED-001",
+      "input_hash": null,
+      "method": "Manual mathematical write-up grounded in full source reading",
+      "output_hash": null,
+      "produced_by_event": "EVENT-004",
+      "reason": "Gate 3: produce a fully-typed, Lean-independent restatement of the claim and its actual proof argument, so Gate 4 can compare against Lean rather than against a paraphrase",
+      "result": "MATCH",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:33:47Z",
+      "type": "NORMALIZED_CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "LEAN_FORMALIZATION_COMPARISON",
+      "actor": "wilson+claude",
+      "evidence_class": "SEMANTIC_COMPARISON",
+      "evidence_files": [
+        "lean/gate4-formalization-comparison.md"
+      ],
+      "id": "FORMAL-001",
+      "input_hash": null,
+      "method": "Manual side-by-side comparison of normalized-claim.md against Collatz/LinearForm.lean",
+      "output_hash": null,
+      "produced_by_event": "EVENT-005",
+      "reason": "Gate 4: compare the independently-derived normalized claim against the actual Lean proof, checking proof STRUCTURE (case-split, Farey identities) not just the final statement",
+      "result": "MATCH",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:35:02Z",
+      "type": "FORMAL_STATEMENT",
+      "verdict": null
+    },
+    {
+      "action": "LEAN_BUILD",
+      "actor": "wilson+claude",
+      "evidence_class": "FORMAL_PROOF",
+      "evidence_files": [
+        "~/ico-collatz/receipts/phase8-reproduction.md"
+      ],
+      "id": "BUILD-001",
+      "input_hash": null,
+      "method": "lake exe cache get && lake build, Lean v4.28.0, Mathlib v4.28.0 pin",
+      "output_hash": null,
+      "produced_by_event": "EVENT-006",
+      "reason": "Gate 5: clean build under the project's pinned toolchain, no sorry/admit, exit 0",
+      "result": "PASS (8033/8033 jobs; see prior receipt for full log)",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:35:15Z",
+      "type": "BUILD",
+      "verdict": null
+    },
+    {
+      "action": "AXIOM_AUDIT",
+      "actor": "wilson+claude",
+      "evidence_class": "FORMAL_AXIOM_AUDIT",
+      "evidence_files": [
+        "~/ico-collatz/evidence/axiom-audit-eliahou.md"
+      ],
+      "id": "AXIOMS-001",
+      "input_hash": null,
+      "method": "#print axioms results_eliahou_theorem_1_1 (and results_eliahou_bound, results_eliahou_bound_card)",
+      "output_hash": null,
+      "produced_by_event": "EVENT-007",
+      "reason": "Gate 6: #print axioms on the headline theorem and its supporting theorems",
+      "result": "PASS -- propext, Classical.choice, Quot.sound only (all MATHLIB_STANDARD); no PROJECT_AXIOM, no EXTERNAL, no UNKNOWN",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:35:15Z",
+      "type": "AXIOM_AUDIT",
+      "verdict": null
+    },
+    {
+      "action": "SEMANTIC_RE_AUDIT",
+      "actor": "wilson+claude",
+      "evidence_class": "SEMANTIC_COMPARISON",
+      "evidence_files": [
+        "lean/gate7-semantic-reaudit.md"
+      ],
+      "id": "REAUDIT-001",
+      "input_hash": null,
+      "method": "Manual re-check of hlower/hupper strictness, hm usage at call site, numOdd_pos proof vs paper's tacit assumption",
+      "output_hash": null,
+      "produced_by_event": "EVENT-008",
+      "reason": "Gate 7 (mandatory second pass): specifically check inequality strictness, hypothesis actually-used, and nonemptiness/division conditions that Gate 4's structural comparison could have glossed over",
+      "result": "PASS -- no undisclosed semantic change; Lean proves numOdd_pos rather than assuming it (stricter than paper)",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:36:01Z",
+      "type": "SEMANTIC_AUDIT",
+      "verdict": null
+    },
+    {
+      "action": "ADVERSARIAL_COMPUTATIONAL_TEST",
+      "actor": "wilson+claude",
+      "evidence_class": "COUNTEREXAMPLE_ATTEMPT",
+      "evidence_files": [
+        "verification/computational/results/verify_convergents.out (superseded",
+        "see EVENT-010)"
+      ],
+      "id": "TEST-001",
+      "input_hash": null,
+      "method": "python3 verification/computational/tests/verify_convergents.py (initial run, native float boundary comparison)",
+      "output_hash": null,
+      "produced_by_event": "EVENT-009",
+      "reason": "Gate 8+10: independently recompute continued-fraction convergents of log2(3) and the Farey identities in Python, as a third computation separate from the 1993 paper's muLISP and Lean's norm_num",
+      "result": "MISMATCH_FOUND (p16/q16 < log2(3) boundary check failed under float64 precision)",
+      "status": "FAIL",
+      "timestamp": "2026-09-19T00:37:40Z",
+      "type": "ADVERSARIAL_TEST",
+      "verdict": null
+    },
+    {
+      "action": "CORRECTION_AND_RECHECK",
+      "actor": "wilson+claude",
+      "evidence_class": "COMPUTATIONAL_TEST",
+      "evidence_files": [
+        "verification/computational/results/verify_convergents.out",
+        "verification/receipt/correction-ledger-entry.md"
+      ],
+      "id": "TEST-001-CORRECTED",
+      "input_hash": null,
+      "method": "python3 verification/computational/tests/verify_convergents.py (corrected: mpf 60-digit precision for boundary comparisons)",
+      "output_hash": null,
+      "produced_by_event": "EVENT-010",
+      "reason": "Do not accept a computational MISMATCH without verifying the test itself first (symmetric to not accepting a PASS without scrutiny) -- re-ran with mpmath 60-digit precision instead of native float64",
+      "result": "COMPUTATIONALLY_SUPPORTED -- all convergents (p13,p15,p16), both Farey identities, and all three boundary inequalities confirmed. Original MISMATCH was a float64 precision artifact in the test script, not a defect in the claim.",
+      "status": "DIAGNOSTIC",
+      "timestamp": "2026-09-19T00:37:40Z",
+      "type": "REPAIR",
+      "verdict": null
+    },
+    {
+      "action": "INDEPENDENT_CHECK",
+      "actor": "wilson+claude",
+      "evidence_class": "INDEPENDENT_REPLICATION",
+      "evidence_files": [
+        "~/ico-collatz/experiments/independent-checker/phase18-results.tsv",
+        "~/.claude/skills/verifying-lean-proofs/BUGS.md"
+      ],
+      "id": "INDEPCHECK-001",
+      "input_hash": null,
+      "method": "lean4export (built at matching v4.28.0 tag) + nanoda_lib 0.4.17 (commit 4c544ed4), scripts/independent-check.sh",
+      "output_hash": null,
+      "produced_by_event": "EVENT-011",
+      "reason": "Gate 9: verify the theorem's exported proof term with nanoda_bin, a Rust implementation separate from the Lean kernel -- addressing the disclosed Lean v4.28.0 kernel vulnerability exposure (predates the 4.32.2 soundness fix) that a same-kernel rebuild cannot address by construction",
+      "result": "CHECKER_INCOMPATIBLE for results_eliahou_theorem_1_1 specifically -- lean4export stalls on this theorem's large proof closure (reproducible, root-caused: memoization cache reset on every call in Export.lean, not a resource issue). 5 of 9 paper-facing theorems (results_eliahou_product_formula, results_farey_pair_bound, results_eliahou_product_formula_real, results_eliahou_sandwich, results_log2_three_lt_ratio) DID pass independent check cleanly.",
+      "status": "NO_VERDICT",
+      "timestamp": "2026-09-19T00:37:53Z",
+      "type": "INDEPENDENT_CHECK",
+      "verdict": null
+    },
+    {
+      "action": "COMPUTATIONAL_CHECK",
+      "actor": "wilson+claude",
+      "evidence_class": "COMPUTATIONAL_TEST",
+      "evidence_files": [
+        "verification/computational/results/verify_convergents.out"
+      ],
+      "id": "COMPTEST-001",
+      "input_hash": null,
+      "method": "Python/mpmath backend (per Section 19 backend abstraction; MATLAB not required)",
+      "output_hash": null,
+      "produced_by_event": "EVENT-012",
+      "reason": "Gate 10: the same convergent/Farey-identity recomputation (EVENT-009/010) doubles as this theorem's computational backend check -- classified explicitly as COMPUTATIONAL_TEST evidence, never promotable to FORMAL_PROOF, per spec Section 18's critical rule. Backend used: Python/mpmath (exact + arbitrary-precision arithmetic), not MATLAB -- both are listed as valid backends under Section 19's backend abstraction.",
+      "result": "COMPUTATIONALLY_SUPPORTED -- see EVENT-010",
+      "status": "DIAGNOSTIC",
+      "timestamp": "2026-09-19T00:38:21Z",
+      "type": "COMPUTATIONAL_TEST",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-001r/claims/claims.json"
+      ],
+      "id": "CLAIM-001",
+      "input_hash": "20b896d7656fd661312353216953a8213cc6e56c6e7b8d93b12b6397aaf55de7",
+      "method": "Wilson confirmed two edits to his delivered extraction, checked against source p.55",
+      "output_hash": "8e3f47ac50d257d17642426c5d4a1acfebee45fd3a6a4dddf12c980e2d435e10",
+      "produced_by_event": "EVENT-013",
+      "reason": "Supersedes EVENT-002: K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval corrected to the open interval (log2 3, log2(3+2^-40)). Delivered claims.json unchanged.",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T09:55:36Z",
+      "type": "CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-001r/claims/claims.json"
+      ],
+      "id": "LEMMA-001",
+      "input_hash": "20b896d7656fd661312353216953a8213cc6e56c6e7b8d93b12b6397aaf55de7",
+      "method": "Wilson confirmed two edits to his delivered extraction, checked against source p.55",
+      "output_hash": "8e3f47ac50d257d17642426c5d4a1acfebee45fd3a6a4dddf12c980e2d435e10",
+      "produced_by_event": "EVENT-013",
+      "reason": "Supersedes EVENT-002: K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval corrected to the open interval (log2 3, log2(3+2^-40)). Delivered claims.json unchanged.",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T09:55:36Z",
+      "type": "CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-001r/claims/claims.json"
+      ],
+      "id": "LEMMA-002",
+      "input_hash": "20b896d7656fd661312353216953a8213cc6e56c6e7b8d93b12b6397aaf55de7",
+      "method": "Wilson confirmed two edits to his delivered extraction, checked against source p.55",
+      "output_hash": "8e3f47ac50d257d17642426c5d4a1acfebee45fd3a6a4dddf12c980e2d435e10",
+      "produced_by_event": "EVENT-013",
+      "reason": "Supersedes EVENT-002: K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval corrected to the open interval (log2 3, log2(3+2^-40)). Delivered claims.json unchanged.",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T09:55:36Z",
+      "type": "CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-001r/claims/claims.json"
+      ],
+      "id": "LEMMA-003",
+      "input_hash": "20b896d7656fd661312353216953a8213cc6e56c6e7b8d93b12b6397aaf55de7",
+      "method": "Wilson confirmed two edits to his delivered extraction, checked against source p.55",
+      "output_hash": "8e3f47ac50d257d17642426c5d4a1acfebee45fd3a6a4dddf12c980e2d435e10",
+      "produced_by_event": "EVENT-013",
+      "reason": "Supersedes EVENT-002: K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval corrected to the open interval (log2 3, log2(3+2^-40)). Delivered claims.json unchanged.",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T09:55:36Z",
+      "type": "CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-001r/claims/claims.json"
+      ],
+      "id": "LEMMA-004",
+      "input_hash": "20b896d7656fd661312353216953a8213cc6e56c6e7b8d93b12b6397aaf55de7",
+      "method": "Wilson confirmed two edits to his delivered extraction, checked against source p.55",
+      "output_hash": "8e3f47ac50d257d17642426c5d4a1acfebee45fd3a6a4dddf12c980e2d435e10",
+      "produced_by_event": "EVENT-013",
+      "reason": "Supersedes EVENT-002: K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval corrected to the open interval (log2 3, log2(3+2^-40)). Delivered claims.json unchanged.",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T09:55:36Z",
+      "type": "CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-001r/claims/claims.json"
+      ],
+      "id": "LEMMA-005",
+      "input_hash": "20b896d7656fd661312353216953a8213cc6e56c6e7b8d93b12b6397aaf55de7",
+      "method": "Wilson confirmed two edits to his delivered extraction, checked against source p.55",
+      "output_hash": "8e3f47ac50d257d17642426c5d4a1acfebee45fd3a6a4dddf12c980e2d435e10",
+      "produced_by_event": "EVENT-013",
+      "reason": "Supersedes EVENT-002: K numeric fact split into K(2^39)=p_13 / K(2^40)=K(2^48)=p_15; step_2 interval corrected to the open interval (log2 3, log2(3+2^-40)). Delivered claims.json unchanged.",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T09:55:36Z",
+      "type": "CLAIM",
+      "verdict": null
+    }
+  ],
+  "schema_version": 3,
+  "superseded_events": [
+    {
+      "event": "EVENT-002",
+      "superseded_by": [
+        "EVENT-013"
+      ]
+    }
+  ]
+}

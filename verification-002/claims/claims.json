@@ -1,0 +1,23 @@
+{
+  "claims": [
+    {
+      "claim_id": "CLAIM-002",
+      "claim_type": "FORMAL",
+      "theorem_name": "powers_of_two_reach_one",
+      "source_location": "source/original.md",
+      "statement_verbatim": "Every power of two reaches 1 under the standard Collatz function: for f(n) = n/2 if n even, 3n+1 if n odd, and for every k >= 0, iterating f starting from 2^k eventually reaches 1.",
+      "explicit_conditions": ["k is a natural number (k >= 0)"],
+      "conclusion": "there exists m such that f applied m times to 2^k equals 1",
+      "surrounding_definitions": [
+        "f: N -> N (called collatzStep in the Lean formalization), f(n) = n/2 if n even, 3n+1 if n odd -- this is the STANDARD (uncompressed) Collatz map, distinct from Eliahou's compressed map T used in VCE-001"
+      ],
+      "referenced_lemmas": [],
+      "proof_structure": {
+        "method": "induction on k",
+        "base_case": "k=0: 2^0=1, already at 1 in 0 steps",
+        "inductive_step": "2^(k+1) is even, one step of f sends it to 2^k; by induction hypothesis 2^k reaches 1 in m more steps, so 2^(k+1) reaches 1 in m+1 steps"
+      }
+    }
+  ],
+  "notes": "This is a deliberately elementary, self-contained claim (no external paper, no supporting lemma chain) -- a genuine contrast case to VCE-001's multi-lemma, paper-derived claim. It exercises the FCVE pipeline's 'simple case' path."
+}

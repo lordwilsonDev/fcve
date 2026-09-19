@@ -1,0 +1,194 @@
+{
+  "blockers": [],
+  "claim_id": "CLAIM-002",
+  "covers_through_event": "EVENT-018",
+  "covers_through_hash": "78773f369808b91dbcc612c53bba55c143b8e77547e7ffec39b52a6f820de5e7",
+  "decision": "PROMOTE",
+  "decision_event": "EVENT-018",
+  "decision_problems": [],
+  "fields": {
+    "AXIOM FOOTPRINT": "propext, Quot.sound",
+    "BUILD RESULT": "PASS -- 8924/8924 jobs, exit 0, no sorry/admit",
+    "CLAIM": "Every power of two reaches 1 under the standard Collatz function: for f(n) = n/2 if n even, 3n+1 if n odd, and for every k >= 0, iterating f starting from 2^k eventually reaches 1.",
+    "COMPUTATIONAL TEST": "NO_COUNTEREXAMPLE_FOUND_IN_TESTED_DOMAIN -- 5001 cases over: every integer k in [0,5000]; full trajectory 2^k..1; two independent implementations of f; NOT PROOF [diagnostic, not proof]",
+    "COST": "18 ledger events; LEAN_BUILD_TIME=NOT RECORDED; COMPUTATIONAL_TEST_TIME=7.19; CHECKER_TIME=NOT RECORDED; HUMAN_TIME, MODEL_CALL_COUNT, MODEL_COST, LATEX_BUILD_TIME=NOT RECORDED (no cost ledger, \u00a743)",
+    "COUNTEREXAMPLE SEARCH": "COMPUTATIONALLY_SUPPORTED -- all cases reach 1 in exactly k steps as predicted; no counterexample in tested domain [diagnostic, not proof]",
+    "FINAL DECISION": "PROMOTE",
+    "GRAPH HASH": "v3 219f692358beb0510c5bd51935390b2eadde98e838b9408e66802b8a2054bc2a (covers 18 events through EVENT-018)",
+    "INDEPENDENT CHECK": "PASS -- Checked 1662 declarations with no errors. Axioms confirmed: propext, Quot.sound (matches Gate 6 exactly).  (legacy wording)",
+    "LEAN STATEMENT": "Gate 4: MATCH",
+    "LEAN VERSION": "4.34.0",
+    "MATHLIB VERSION": "master 5ed2965",
+    "NORMALIZED CLAIM": "verification-002/normalized/normalized-claim.md -- MATCH",
+    "REPRODUCIBILITY LEVEL": "R4 (ceiling supported by recorded evidence; NOT re-run by this tool; R5 needs full-package rebuild, not assessed)",
+    "SEMANTIC MATCH": "Gate 4: MATCH; Gate 7: PASS -- no undisclosed semantic change; axiom footprint itself serves as independent corroboration of the re-audit's conclusion",
+    "SOURCE HASH": "sha256:97d49fbc3576e79f3901ce85f0fb9dd92d9cbf06d6beb933aada6a2f1a194d60 (../verification-002/source/original.md)",
+    "THEOREM ID": "CLAIM-002 (powers_of_two_reach_one)"
+  },
+  "gates": [
+    {
+      "action": "SOURCE_INTAKE",
+      "event": "EVENT-001",
+      "gate": "G0",
+      "note": "",
+      "result": "PASS",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "event": "EVENT-002",
+      "gate": "G1",
+      "note": "",
+      "result": "PASS",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "ASSUMPTION_EXTRACTION",
+      "event": "EVENT-003",
+      "gate": "G2",
+      "note": "",
+      "result": "PASS -- no formalization assumptions of consequence (no injectivity bridge, no real-number machinery)",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "SEMANTIC_NORMALIZATION",
+      "event": "EVENT-004",
+      "gate": "G3",
+      "note": "",
+      "result": "MATCH",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "LEAN_FORMALIZATION_COMPARISON",
+      "event": "EVENT-005",
+      "gate": "G4",
+      "note": "",
+      "result": "MATCH",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "LEAN_BUILD",
+      "event": "EVENT-006",
+      "gate": "G5",
+      "note": "",
+      "result": "PASS -- 8924/8924 jobs, exit 0, no sorry/admit",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "AXIOM_AUDIT",
+      "event": "EVENT-007",
+      "gate": "G6",
+      "note": "",
+      "result": "PASS -- propext, Quot.sound only. NO Classical.choice (fully constructive) -- notably cleaner than VCE-001's headline theorem, consistent with \u2115-only parity/arithmetic reasoning needing no classical real-number decidability.",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "SEMANTIC_RE_AUDIT",
+      "event": "EVENT-008",
+      "gate": "G7",
+      "note": "",
+      "result": "PASS -- no undisclosed semantic change; axiom footprint itself serves as independent corroboration of the re-audit's conclusion",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "ADVERSARIAL_COMPUTATIONAL_TEST",
+      "event": "EVENT-009",
+      "gate": "G8",
+      "note": "",
+      "result": "COMPUTATIONALLY_SUPPORTED -- all cases reach 1 in exactly k steps as predicted; no counterexample in tested domain",
+      "satisfied": true,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "action": "INDEPENDENT_CHECK",
+      "event": "EVENT-010",
+      "gate": "G9",
+      "note": "",
+      "result": "PASS -- Checked 1662 declarations with no errors. Axioms confirmed: propext, Quot.sound (matches Gate 6 exactly).",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "COMPUTATIONAL_CHECK",
+      "event": "EVENT-011",
+      "gate": "G10",
+      "note": "",
+      "result": "NO_COUNTEREXAMPLE_FOUND_IN_TESTED_DOMAIN -- 5001 cases over: every integer k in [0,5000]; full trajectory 2^k..1; two independent implementations of f; NOT PROOF",
+      "satisfied": true,
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "action": "EVIDENCE_GRAPH",
+      "event": "EVENT-012",
+      "gate": "G11",
+      "note": "",
+      "result": "PASS -- 11 nodes, 12 edges, GRAPH_SHA256=611fea5b8614fa1ca6697aacb57c7c3f72c8d91120463920f2f1f523e171c9b8",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "REPORT_GENERATION",
+      "event": "EVENT-017",
+      "gate": "G12",
+      "note": "",
+      "result": "PASS -- 0 fatal errors, 0 unresolved references, 0 missing citations, 0 missing figures, 0 missing characters (tectonic, 2 passes; pdflatex named in \u00a751 was NOT used; 66 layout warnings)",
+      "satisfied": true,
+      "status": "PASS"
+    },
+    {
+      "action": "GOVERNANCE_DECISION",
+      "event": "EVENT-018",
+      "gate": "G13",
+      "note": "",
+      "result": "PROMOTE -- all Section 53 gates G0-G12 satisfied; re-affirmed with the stated limitations (repository/commit not recorded, checker not identified); computational evidence diagnostic only; see receipt/governance-decision.md",
+      "satisfied": true,
+      "status": "DECIDED"
+    },
+    {
+      "action": "canonical chain (\u00a72)",
+      "event": null,
+      "gate": "ORDER",
+      "note": "",
+      "result": null,
+      "satisfied": true,
+      "status": "PASS"
+    }
+  ],
+  "graph_sha256_v3": "219f692358beb0510c5bd51935390b2eadde98e838b9408e66802b8a2054bc2a",
+  "ledger": "/Users/lordwilson/fcve/verification-002r/evidence/event-ledger.jsonl",
+  "limitations": [
+    "10/18 events lack INPUT/OUTPUT_HASH (\u00a725; legacy events, not backfilled)",
+    "EVENT-009 uses non-\u00a716 wording (COMPUTATIONALLY_SUPPORTED); read as DIAGNOSTIC"
+  ],
+  "receipt_version": 1,
+  "repro_level": 4,
+  "sources": {
+    "AXIOM FOOTPRINT": "parsed-legacy-text:EVENT-007",
+    "BUILD RESULT": "ledger:EVENT-006",
+    "CLAIM": "claims.json",
+    "COMPUTATIONAL TEST": "ledger:EVENT-011",
+    "COST": "records",
+    "COUNTEREXAMPLE SEARCH": "ledger:EVENT-009",
+    "FINAL DECISION": "ledger:GOVERNANCE_DECISION",
+    "GRAPH HASH": "derived from ledger",
+    "INDEPENDENT CHECK": "ledger:EVENT-010",
+    "LEAN STATEMENT": "ledger:EVENT-005",
+    "LEAN VERSION": "parsed-legacy-text:EVENT-006",
+    "MATHLIB VERSION": "parsed-legacy-text:EVENT-006",
+    "NORMALIZED CLAIM": "ledger:EVENT-004",
+    "REPRODUCIBILITY LEVEL": "derived: \u00a735 rules",
+    "SEMANTIC MATCH": "ledger",
+    "SOURCE HASH": "file-hash (computed now from the preserved source)",
+    "THEOREM ID": "claims.json"
+  },
+  "trust": "**Trust Statement.** The formal result was checked using Lean 4.34.0 under the pinned project environment (Mathlib master 5ed2965). The theorem CLAIM-002 was kernel-checked with axiom footprint propext, Quot.sound. Independent checking status is INDEPENDENTLY_CHECKED (recorded before the Section 17 vocabulary existed, as PASS). Computational/adversarial testing produced: COMPUTATIONALLY_SUPPORTED; NO_COUNTEREXAMPLE_FOUND_IN_TESTED_DOMAIN (diagnostic only). The remaining trust limitations are: 10/18 events lack INPUT/OUTPUT_HASH (\u00a725; legacy events, not backfilled); EVENT-009 uses non-\u00a716 wording (COMPUTATIONALLY_SUPPORTED); read as DIAGNOSTIC. This report does not claim that computational testing constitutes formal proof or that formalization alone establishes the truth of the original informal statement.",
+  "waivers": {}
+}

@@ -1,0 +1,300 @@
+{
+  "edges": [
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "CLAIM-002",
+      "to": "SOURCE-002",
+      "via_event": "EVENT-002"
+    },
+    {
+      "edge_type": "DERIVED_FROM",
+      "from": "assumptions-002.json",
+      "to": "CLAIM-002",
+      "via_event": "EVENT-003"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "CLAIM-002",
+      "to": "NORMALIZED-002",
+      "via_event": "EVENT-004"
+    },
+    {
+      "edge_type": "TRANSFORMS",
+      "from": "NORMALIZED-002",
+      "to": "FORMAL-002",
+      "via_event": "EVENT-005"
+    },
+    {
+      "edge_type": "PRODUCES",
+      "from": "FORMAL-002",
+      "to": "BUILD-002",
+      "via_event": "EVENT-006"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "AXIOMS-002",
+      "to": "BUILD-002",
+      "via_event": "EVENT-007"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "REAUDIT-002",
+      "to": "FORMAL-002",
+      "via_event": "EVENT-008"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "REAUDIT-002",
+      "to": "AXIOMS-002",
+      "via_event": "EVENT-008"
+    },
+    {
+      "edge_type": "TESTS",
+      "from": "TEST-002",
+      "to": "NORMALIZED-002",
+      "via_event": "EVENT-009"
+    },
+    {
+      "edge_type": "TESTS",
+      "from": "TEST-002",
+      "to": "FORMAL-002",
+      "via_event": "EVENT-009"
+    },
+    {
+      "edge_type": "JUSTIFIES",
+      "from": "INDEPCHECK-002",
+      "to": "AXIOMS-002",
+      "via_event": "EVENT-010"
+    },
+    {
+      "edge_type": "TESTS",
+      "from": "COMPTEST-002",
+      "to": "TEST-002",
+      "via_event": "EVENT-011"
+    }
+  ],
+  "event_count": 11,
+  "external_inputs": [
+    {
+      "event": "EVENT-001",
+      "token": "source/original.md"
+    }
+  ],
+  "final_event_hash": "b1eeb33378bcac799767e373bd6751bec82972f51af9eccb388949b23d4e41c8",
+  "graph_sha256": "641b31e9d90965e60703b8f38bec55d6ce2aa2d455bff594d41e45ee00ffd82b",
+  "nodes": [
+    {
+      "action": "SOURCE_INTAKE",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-002/source/original.md",
+        "verification-002/source/source-metadata.json"
+      ],
+      "id": "SOURCE-002",
+      "input_hash": null,
+      "method": "shasum -a 256",
+      "output_hash": null,
+      "produced_by_event": "EVENT-001",
+      "reason": "VCE-002 Gate 0: preserve the self-authored claim statement, disclosed honestly as self-authored rather than given false external provenance",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:48:49Z",
+      "type": "SOURCE",
+      "verdict": null
+    },
+    {
+      "action": "CLAIM_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-002/claims/claims.json"
+      ],
+      "id": "CLAIM-002",
+      "input_hash": null,
+      "method": "Manual extraction from source/original.md",
+      "output_hash": null,
+      "produced_by_event": "EVENT-002",
+      "reason": "VCE-002 Gate 1: extract the claim and its (elementary) proof structure",
+      "result": "PASS",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:49:18Z",
+      "type": "CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "ASSUMPTION_EXTRACTION",
+      "actor": "wilson+claude",
+      "evidence_class": "SOURCE_ASSERTION",
+      "evidence_files": [
+        "verification-002/claims/assumptions.json"
+      ],
+      "id": "assumptions-002.json",
+      "input_hash": null,
+      "method": "Manual analysis",
+      "output_hash": null,
+      "produced_by_event": "EVENT-003",
+      "reason": "VCE-002 Gate 2: distinguish source vs formalization assumptions",
+      "result": "PASS -- no formalization assumptions of consequence (no injectivity bridge, no real-number machinery)",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:49:18Z",
+      "type": "ASSUMPTION",
+      "verdict": null
+    },
+    {
+      "action": "SEMANTIC_NORMALIZATION",
+      "actor": "wilson+claude",
+      "evidence_class": "HUMAN_REVIEW",
+      "evidence_files": [
+        "verification-002/normalized/normalized-claim.md"
+      ],
+      "id": "NORMALIZED-002",
+      "input_hash": null,
+      "method": "Manual write-up",
+      "output_hash": null,
+      "produced_by_event": "EVENT-004",
+      "reason": "VCE-002 Gate 3",
+      "result": "MATCH",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:49:49Z",
+      "type": "NORMALIZED_CLAIM",
+      "verdict": null
+    },
+    {
+      "action": "LEAN_FORMALIZATION_COMPARISON",
+      "actor": "wilson+claude",
+      "evidence_class": "SEMANTIC_COMPARISON",
+      "evidence_files": [
+        "verification-002/lean/gate4-formalization-comparison.md"
+      ],
+      "id": "FORMAL-002",
+      "input_hash": null,
+      "method": "Manual side-by-side comparison",
+      "output_hash": null,
+      "produced_by_event": "EVENT-005",
+      "reason": "VCE-002 Gate 4",
+      "result": "MATCH",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:49:49Z",
+      "type": "FORMAL_STATEMENT",
+      "verdict": null
+    },
+    {
+      "action": "LEAN_BUILD",
+      "actor": "wilson+claude",
+      "evidence_class": "FORMAL_PROOF",
+      "evidence_files": [
+        "~/ico-collatz/receipts/environment.md"
+      ],
+      "id": "BUILD-002",
+      "input_hash": null,
+      "method": "lake build IcoCollatzVerification.PowersOfTwoReachOne, Lean v4.34.0, Mathlib master 5ed2965",
+      "output_hash": null,
+      "produced_by_event": "EVENT-006",
+      "reason": "VCE-002 Gate 5: clean build under our own control project's toolchain",
+      "result": "PASS -- 8924/8924 jobs, exit 0, no sorry/admit",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:50:03Z",
+      "type": "BUILD",
+      "verdict": null
+    },
+    {
+      "action": "AXIOM_AUDIT",
+      "actor": "wilson+claude",
+      "evidence_class": "FORMAL_AXIOM_AUDIT",
+      "evidence_files": [
+        "prior session transcript (lake env lean AxiomProbe.lean output)"
+      ],
+      "id": "AXIOMS-002",
+      "input_hash": null,
+      "method": "#print axioms powers_of_two_reach_one",
+      "output_hash": null,
+      "produced_by_event": "EVENT-007",
+      "reason": "VCE-002 Gate 6",
+      "result": "PASS -- propext, Quot.sound only. NO Classical.choice (fully constructive) -- notably cleaner than VCE-001's headline theorem, consistent with \u2115-only parity/arithmetic reasoning needing no classical real-number decidability.",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:50:03Z",
+      "type": "AXIOM_AUDIT",
+      "verdict": null
+    },
+    {
+      "action": "SEMANTIC_RE_AUDIT",
+      "actor": "wilson+claude",
+      "evidence_class": "SEMANTIC_COMPARISON",
+      "evidence_files": [
+        "verification-002/lean/gate4-formalization-comparison.md"
+      ],
+      "id": "REAUDIT-002",
+      "input_hash": null,
+      "method": "Manual check: Nat equality/mod decidability is constructive; axiom footprint (no Classical.choice) corroborates this independently",
+      "output_hash": null,
+      "produced_by_event": "EVENT-008",
+      "reason": "VCE-002 Gate 7: confirm no hidden classical/decidability assumption despite the if-then-else on n%2=0",
+      "result": "PASS -- no undisclosed semantic change; axiom footprint itself serves as independent corroboration of the re-audit's conclusion",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:50:03Z",
+      "type": "SEMANTIC_AUDIT",
+      "verdict": null
+    },
+    {
+      "action": "ADVERSARIAL_COMPUTATIONAL_TEST",
+      "actor": "wilson+claude",
+      "evidence_class": "COUNTEREXAMPLE_ATTEMPT",
+      "evidence_files": [
+        "verification-002/computational/results/verify_powers_of_two.out"
+      ],
+      "id": "TEST-002",
+      "input_hash": null,
+      "method": "python3 verification-002/computational/tests/verify_powers_of_two.py",
+      "output_hash": null,
+      "produced_by_event": "EVENT-009",
+      "reason": "VCE-002 Gates 8+10: independent brute-force check in Python, covering minimal case (k=0), a dense range, and large-parameter cases (k=50,100,500,1000)",
+      "result": "COMPUTATIONALLY_SUPPORTED -- all cases reach 1 in exactly k steps as predicted; no counterexample in tested domain",
+      "status": "DIAGNOSTIC",
+      "timestamp": "2026-09-19T00:50:31Z",
+      "type": "ADVERSARIAL_TEST",
+      "verdict": null
+    },
+    {
+      "action": "INDEPENDENT_CHECK",
+      "actor": "wilson+claude",
+      "evidence_class": "INDEPENDENT_REPLICATION",
+      "evidence_files": [
+        "~/ico-collatz/experiments/independent-checker/soft-problem/powers_of_two_reach_one.nanoda.stdout.txt"
+      ],
+      "id": "INDEPCHECK-002",
+      "input_hash": null,
+      "method": "lean4export-v4.34.0 + nanoda_lib 0.4.17, scripts/independent-check.sh",
+      "output_hash": null,
+      "produced_by_event": "EVENT-010",
+      "reason": "VCE-002 Gate 9: verify via nanoda_bin (Rust checker, separate from Lean kernel). This theorem's small closure (pure \u2115 arithmetic) avoids the large-closure exporter defect that blocked VCE-001's headline theorem",
+      "result": "PASS -- Checked 1662 declarations with no errors. Axioms confirmed: propext, Quot.sound (matches Gate 6 exactly).",
+      "status": "PASS",
+      "timestamp": "2026-09-19T00:50:42Z",
+      "type": "INDEPENDENT_CHECK",
+      "verdict": null
+    },
+    {
+      "action": "COMPUTATIONAL_CHECK",
+      "actor": "wilson+claude",
+      "evidence_class": "COMPUTATIONAL_TEST",
+      "evidence_files": [
+        "verification-002r/computational/results/verify_gate10-compute-record.json",
+        "verification-002r/computational/results/verify_gate10.stdout.log",
+        "verification-002r/computational/results/verify_gate10.stderr.log"
+      ],
+      "id": "COMPTEST-002",
+      "input_hash": "572f8548908413435acfe6e8ad2dab953c8050c640e1eaf3c578af6c80461159",
+      "method": "python Python 3.12.9: verify_gate10.py",
+      "output_hash": "beaa105c400283e85121a36da53d44b0132653c392d7ebf1de0b32c19574abf9",
+      "produced_by_event": "EVENT-011",
+      "reason": "Independent computational check of the claim: full-trajectory test over a large range, two implementations, with a control that must refute a wrong claim (Gate 10)",
+      "result": "NO_COUNTEREXAMPLE_FOUND_IN_TESTED_DOMAIN -- 5001 cases over: every integer k in [0,5000]; full trajectory 2^k..1; two independent implementations of f; NOT PROOF",
+      "status": "DIAGNOSTIC",
+      "timestamp": "2026-09-19T08:53:01Z",
+      "type": "COMPUTATIONAL_TEST",
+      "verdict": null
+    }
+  ],
+  "schema_version": 3
+}

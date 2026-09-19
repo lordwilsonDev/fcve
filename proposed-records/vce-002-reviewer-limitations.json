@@ -1,0 +1,15 @@
+{
+  "claim_id": "CLAIM-002",
+  "reviewer": "assistant (Claude)",
+  "none_basis": "",
+  "confirmation": "NOT CONFIRMED: drafted by the assistant from the Gate 8 script; awaiting Wilson",
+  "limitations": [
+    {
+      "id": "RL-001",
+      "scope": "TESTS",
+      "statement": "The Gate 8 search examined k = 0 to 20 and k = 50, 100, 500 and 1000 only; no other values of k were tested by that script.",
+      "basis": "verification-002/computational/tests/verify_powers_of_two.py, the loop `for k in list(range(0, 21)) + [50, 100, 500, 1000]`",
+      "short": "The Gate 8 search examined only k = 0 to 20 and k = 50, 100, 500, 1000"
+    }
+  ]
+}

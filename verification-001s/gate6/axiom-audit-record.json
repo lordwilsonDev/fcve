@@ -1,0 +1,43 @@
+{
+  "external_allowlist": [],
+  "failures": [],
+  "footprint": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "gate": "AXIOM_AUDIT",
+  "lean_exit_code": 0,
+  "module": "Results",
+  "names": [
+    "results_eliahou_theorem_1_1"
+  ],
+  "probe_log": {
+    "path": "axiom-probe.log",
+    "sha256": "71d784260f974311e9cfe99e3867cba2c48ca8cc10c58b22f3e104923f8d94e8"
+  },
+  "project_declared_axioms": [],
+  "reported": {
+    "results_eliahou_theorem_1_1": [
+      "Classical.choice"
+    ]
+  },
+  "theorems": {
+    "results_eliahou_theorem_1_1": {
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "classes": {
+        "Classical.choice": "CLASSICAL",
+        "Quot.sound": "KERNEL_STANDARD",
+        "propext": "KERNEL_STANDARD"
+      },
+      "status": "PASS",
+      "trusts_compiler": false,
+      "uses_sorry": false
+    }
+  },
+  "verdict": "PASS"
+}

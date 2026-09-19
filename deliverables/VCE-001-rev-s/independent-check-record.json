@@ -1,0 +1,64 @@
+{
+  "checker": {
+    "export_bin": "/Users/lordwilson/ico-collatz/targets/lean4export-fastnat/.lake/build/bin/lean4export",
+    "nanoda_bin": "/Users/lordwilson/ico-collatz/targets/nanoda_lib-fastparse/target/release/nanoda_bin",
+    "nanoda_commit": "4c544ed4099c8227f07d5de77ad1e69fb0740a27"
+  },
+  "checker_axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "checker_exit_code": 0,
+  "checker_logs": {
+    "stderr": {
+      "path": "results_eliahou_theorem_1_1.nanoda.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "results_eliahou_theorem_1_1.nanoda.stdout.log",
+      "sha256": "db538ccc1728506a50952b159b7296ab0be502841e1f70bde137bba6cd06dc33"
+    }
+  },
+  "commands": {
+    "check": "/Users/lordwilson/ico-collatz/targets/nanoda_lib-fastparse/target/release/nanoda_bin results_eliahou_theorem_1_1.nanoda-config.json",
+    "export": "cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export-fastnat/.lake/build/bin/lean4export Results -- results_eliahou_theorem_1_1 > results_eliahou_theorem_1_1.export"
+  },
+  "declaration": "results_eliahou_theorem_1_1",
+  "declarations_checked": 17464,
+  "expected_lean_version": "4.28.0",
+  "export": {
+    "abort_reason": null,
+    "bytes": 187326147,
+    "complete": true,
+    "deleted_after_check": true,
+    "exit_code": 0,
+    "seconds": 60.0,
+    "sha256": "48e1e06541eaca207c3e6893341c82cbb7bbf5fb9f79814c817ca9ac03f39b76"
+  },
+  "export_meta": {
+    "exporter": {
+      "name": "lean4export",
+      "version": "3.1.0"
+    },
+    "format": {
+      "version": "3.1.0"
+    },
+    "lean": {
+      "githash": "7e01a1bf5c70fc6167d49c345d3bf80596e9a79b",
+      "version": "4.28.0"
+    }
+  },
+  "gate": "INDEPENDENT_CHECK",
+  "gate6_footprint": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "module": "Results",
+  "note": "Recording the checker and version does not by itself establish independence (\u00a717)",
+  "project": "/Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds",
+  "reason": "17464 declarations re-checked, axioms match Gate 6",
+  "result": "INDEPENDENTLY_CHECKED",
+  "started_utc": "2026-09-19T10:23:58Z"
+}
