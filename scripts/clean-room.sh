@@ -84,7 +84,8 @@ for N in $(seq 1 "$RUNS"); do
     else echo "- Checker tools: built from scratch by setup.sh"; fi
     echo "- Manual interventions not written in the repository: none by this script"
     echo; echo "| Step | Command | Exit | Seconds | Notes (WARN / FAIL / UNRESOLVED / verdict lines) |"; echo "|---|---|---|---|---|"; printf '%s' "$STEPS"
-    echo; echo "- Audit verdict line: \`$(grep -m1 '^## Verdict' "$CLONE/.fcve-work/cleanroom-audit/AUDIT.md" 2>/dev/null)\`"
+    echo; echo "- Engine test suites skipped in the fresh clone (after restore.sh): $(grep -o 'engine test suite: [a-z]* (skipped=[0-9]*' "$BASE/run$N-smoke-test.log" 2>/dev/null | tr '\n' ';' | sed 's/;$//' | grep . || echo none)"
+    echo "- Audit verdict line: \`$(grep -m1 '^## Verdict' "$CLONE/.fcve-work/cleanroom-audit/AUDIT.md" 2>/dev/null)\`"
     case "$RESULT" in
       PASS) echo "- **Result: PASS**  (doctor-before is informational: a fresh clone is expected to be NOT READY until setup)" ;;
       BLOCKED) echo "- **Result: BLOCKED (insufficient disk)** — NOT a FAIL of the repository: setup/doctor stopped because free disk was below the in-flight requirement, so no verdict was reached. Re-run with more free space." ;;
