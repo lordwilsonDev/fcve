@@ -76,6 +76,9 @@ recorded PROMOTE and an issued deliverable. What is left is mostly decisions and
 - `skills/verifying-lean-proofs/scripts/audit.sh` runs rows 1-6, 8, 10 and writes `AUDIT.md` (verdict max PROVISIONAL; rows 7/9 need a human/web). Tested on two projects/toolchains (eliahou-collatz-bounds @4.28.0, ico-collatz-verification @4.34.0); examples in `skills/.../examples/`. Measured: ~26 min (2 decls, incl. a ~6 min stalled upstream attempt) and ~5 min (1 decl); row 6 is dominated by importing Mathlib (~2-3 min). Bugs found by running it: BUG-006. Linux untested.
 - Observed: an orphaned stalled `lean4export` (pid 83961, ~14 h old, from the earlier Phase-18 retry) was still running; left alone (not started this session).
 
+## Planned (not started)
+- `docs/blueprints/FCVE-SELF-BOOTSTRAPPING-BLUEPRINT.md` — Wilson's plan to make a fresh clone self-bootstrapping on the Mac mini (CLAUDE.md, README rewrite, setup/doctor/smoke scripts, environment manifest, clean-room procedure, regression + failure-injection tests). Added 2026-09-19 as a plan of record only; **nothing implemented, nothing deleted; Wilson said "not ready yet".** Its 20 phases start with inspecting what already exists (much of `audit.sh`, the skill, and the trust matrix already covers parts of it).
+
 ## Open items (recommended order)
 1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
    `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered
