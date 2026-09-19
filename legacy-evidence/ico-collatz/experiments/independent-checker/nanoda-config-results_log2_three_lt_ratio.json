@@ -1,0 +1,18 @@
+{
+  "export_file_path": "/Users/lordwilson/ico-collatz/experiments/independent-checker/results_log2_three_lt_ratio.export",
+  "use_stdin": false,
+  "permitted_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "unpermitted_axiom_hard_error": false,
+  "nat_extension": true,
+  "string_extension": true,
+  "print_success_message": true,
+  "print_axioms": true,
+  "pp_declars": [
+    "results_log2_three_lt_ratio"
+  ],
+  "pp_to_stdout": true
+}

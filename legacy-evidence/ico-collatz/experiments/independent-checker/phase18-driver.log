@@ -1,0 +1,18 @@
+--- phase18 results ---
+decl	status	closer	seconds	export_bytes	nanoda_exit	nanoda_decls	reason
+results_eliahou_product_formula	PASS	nanoda	60	50667171	0	12809	-
+results_farey_pair_bound	PASS	nanoda	20	46792968	0	12012	-
+results_eliahou_product_formula_real	PASS	nanoda	180	53870161	0	13639	-
+results_eliahou_sandwich	PASS	nanoda	120	74005619	0	17320	-
+--- phase18 results ---
+decl	status	closer	seconds	export_bytes	nanoda_exit	nanoda_decls	reason
+results_eliahou_product_formula	PASS	nanoda	60	50667171	0	12809	-
+results_farey_pair_bound	PASS	nanoda	20	46792968	0	12012	-
+results_eliahou_product_formula_real	PASS	nanoda	180	53870161	0	13639	-
+results_eliahou_sandwich	PASS	nanoda	120	74005619	0	17320	-
+results_log2_three_lt_ratio	PASS	nanoda	181	73780867	0	17301	-
+results_rational_approx_bound	BLOCKED	export	420	70582272	-	-	stalled-no-output/rc=143
+results_eliahou_bound	BLOCKED	export	403	70807552	-	-	stalled-no-output/rc=143
+results_eliahou_bound_card	BLOCKED	export	322	0	-	-	stalled-no-output/rc=143
+results_eliahou_bound_card	BLOCKED	export	685	70840320	-	-	stalled-no-output/rc=143
+results_eliahou_theorem_1_1	BLOCKED	export	603	71147520	-	-	stalled-no-output/rc=143

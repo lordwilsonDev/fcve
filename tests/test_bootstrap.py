@@ -546,6 +546,32 @@ class CleanRoomClassification(unittest.TestCase):
         with open(os.path.join(SCRIPTS, "clean-room.sh")) as f: src = f.read()
         for needle in ("Result: BLOCKED (insufficient disk)", "NOT a FAIL of the repository", "Logs kept (BUG-011)", "exit 3"): self.assertIn(needle, src, needle)
 
+
+class LegacyEvidenceArchive(unittest.TestCase):
+    """The delivered ledgers cite evidence files under ~/ico-collatz, which is not version controlled. Copies must live in the repo."""
+    def test_every_external_evidence_file_cited_by_a_ledger_has_an_archived_copy_and_the_manifest_verifies(self):
+        import glob
+        home = HOME; cited = set()
+        for led in glob.glob(os.path.join(ROOT, "deliverables", "*", "event-ledger.jsonl")) + glob.glob(os.path.join(ROOT, "verification*", "evidence", "event-ledger.jsonl")):
+            with open(led) as f:
+                for line in f:
+                    ev = json.loads(line).get("evidence") or []
+                    if isinstance(ev, str):
+                        try: ev = json.loads(ev.replace("'", '"'))
+                        except Exception: ev = [ev]
+                    for p in ev:
+                        p = str(p).strip()
+                        if p.startswith("~/ico-collatz/"): cited.add(p.split(" (")[0])
+        self.assertGreaterEqual(len(cited), 5, "expected the legacy ledgers to cite files under ~/ico-collatz")
+        for p in sorted(cited):
+            self.assertTrue(os.path.exists(os.path.join(ROOT, "legacy-evidence", "ico-collatz", p[len("~/ico-collatz/"):])), "no archived copy of " + p)
+        r = subprocess.run(["shasum", "-a", "256", "-c", "MANIFEST.sha256"], cwd=os.path.join(ROOT, "legacy-evidence"), capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout[-400:])
+
+    def test_no_pdfs_or_exports_in_the_archive(self):
+        bad = [os.path.join(dp, f) for dp, _, fs in os.walk(os.path.join(ROOT, "legacy-evidence")) for f in fs if f.lower().endswith((".pdf", ".export"))]
+        self.assertEqual(bad, [])
+
 # ------------------------------------------------------------------------------------------------------------ slow tier
 @unittest.skipUnless(FULL and have_setup, "slow tier: set FCVE_TEST_FULL=1 and run scripts/setup.sh first")
 class SlowTier(unittest.TestCase):

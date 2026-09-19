@@ -171,7 +171,9 @@
     "scripts/install-agent-skills.sh",
     "docs/AGENT-INTEGRATIONS.md",
     "manifests/load-canaries.json",
-    "docs/LOADING-CHECK.md"
+    "docs/LOADING-CHECK.md",
+    "legacy-evidence/README.md",
+    "legacy-evidence/MANIFEST.sha256"
   ],
   "expected_skill_files": [
     "skills/verifying-lean-proofs/SKILL.md",

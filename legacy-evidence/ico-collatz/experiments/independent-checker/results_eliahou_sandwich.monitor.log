@@ -1,0 +1,9 @@
+2026-09-18T16:53:03Z START decl=results_eliahou_sandwich
+2026-09-18T16:53:03Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export/.lake/build/bin/lean4export Results -- results_eliahou_sandwich > /Users/lordwilson/ico-collatz/experiments/independent-checker/results_eliahou_sandwich.export
+2026-09-18T16:53:03Z START disk: /dev/disk3s1s1   239362496  12345428   5667188    69%  458732 56671880    1%   /
+2026-09-18T16:53:23Z tick t=20s free_kb=5659180 out_bytes=0 flat_ticks=0
+2026-09-18T16:53:43Z tick t=40s free_kb=5650888 out_bytes=0 flat_ticks=1
+2026-09-18T16:54:03Z tick t=60s free_kb=5650188 out_bytes=0 flat_ticks=2
+2026-09-18T16:54:23Z tick t=80s free_kb=5648392 out_bytes=0 flat_ticks=3
+2026-09-18T16:54:43Z tick t=100s free_kb=5574456 out_bytes=74002432 flat_ticks=0
+2026-09-18T16:55:03Z END rc=0 killed=0 reason=none secs=120 out_bytes=74005619 last_byte=\n

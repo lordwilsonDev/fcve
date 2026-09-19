@@ -1,0 +1,5 @@
+2026-09-18T22:09:11Z START decl=results_farey_pair_bound
+2026-09-18T22:09:11Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export/.lake/build/bin/lean4export Results -- results_farey_pair_bound > /Users/lordwilson/ico-collatz/experiments/independent-checker/results_farey_pair_bound.export
+2026-09-18T22:09:11Z START disk: /dev/disk3s1s1   239362496  12345428   4512704    74%  458732 45127040    1%   /
+2026-09-18T22:09:31Z tick t=20s free_kb=4512500 out_bytes=0 flat_ticks=0
+2026-09-18T22:09:51Z END rc=0 killed=0 reason=none secs=40 out_bytes=46792968 last_byte=\n

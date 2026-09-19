@@ -1,0 +1,16 @@
+theorem results_eliahou_product_formula :
+  forall {L : Nat} (c : CollatzCycle L),
+  Eq
+    (Finset.prod (CollatzCycle.oddIndices c)
+      (fun (i : Fin L) => HAdd.hAdd (HMul.hMul (OfNat.ofNat 3) (CollatzCycle.seq c i)) (OfNat.ofNat 1)))
+    (HMul.hMul (HPow.hPow (OfNat.ofNat 2) L)
+      (Finset.prod (CollatzCycle.oddIndices c) (fun (i : Fin L) => CollatzCycle.seq c i))) :=
+  _
+
+axiom propext {a b : Prop} : Iff a b → Eq a b
+
+axiom Quot.sound.{u} {α : Sort u} {r : α → α → Prop} {a b : α} : r a b → Eq (Quot.mk r a) (Quot.mk r b)
+
+axiom Classical.choice.{u} {α : Sort u} : Nonempty α → α
+
+Checked 12809 declarations with no errors

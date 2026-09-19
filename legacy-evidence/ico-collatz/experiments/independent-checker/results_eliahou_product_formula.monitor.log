@@ -1,0 +1,6 @@
+2026-09-18T16:48:36Z START decl=results_eliahou_product_formula
+2026-09-18T16:48:36Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export/.lake/build/bin/lean4export Results -- results_eliahou_product_formula > /Users/lordwilson/ico-collatz/experiments/independent-checker/results_eliahou_product_formula.export
+2026-09-18T16:48:36Z START disk: /dev/disk3s1s1   239362496  12345428   5851004    68%  458732 58510040    1%   /
+2026-09-18T16:48:56Z tick t=20s free_kb=5851220 out_bytes=0 flat_ticks=0
+2026-09-18T16:49:16Z tick t=40s free_kb=5853892 out_bytes=0 flat_ticks=1
+2026-09-18T16:49:36Z END rc=0 killed=0 reason=none secs=60 out_bytes=50667171 last_byte=\n

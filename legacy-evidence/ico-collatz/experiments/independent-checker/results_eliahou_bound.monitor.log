@@ -1,0 +1,25 @@
+2026-09-18T17:09:36Z START decl=results_eliahou_bound
+2026-09-18T17:09:36Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export/.lake/build/bin/lean4export Results -- results_eliahou_bound > /Users/lordwilson/ico-collatz/experiments/independent-checker/results_eliahou_bound.export
+2026-09-18T17:09:36Z START disk: /dev/disk3s1s1   239362496  12345428   5412184    70%  458732 54121840    1%   /
+2026-09-18T17:09:57Z tick t=21s free_kb=5411848 out_bytes=0 flat_ticks=0
+2026-09-18T17:10:17Z tick t=41s free_kb=5464816 out_bytes=0 flat_ticks=1
+2026-09-18T17:10:37Z tick t=61s free_kb=5464156 out_bytes=0 flat_ticks=2
+2026-09-18T17:10:57Z tick t=81s free_kb=5463568 out_bytes=0 flat_ticks=3
+2026-09-18T17:11:17Z tick t=101s free_kb=5387380 out_bytes=70807552 flat_ticks=0
+2026-09-18T17:11:37Z tick t=121s free_kb=5390056 out_bytes=70807552 flat_ticks=1
+2026-09-18T17:11:57Z tick t=141s free_kb=5380124 out_bytes=70807552 flat_ticks=2
+2026-09-18T17:12:17Z tick t=161s free_kb=5393096 out_bytes=70807552 flat_ticks=3
+2026-09-18T17:12:37Z tick t=181s free_kb=5375176 out_bytes=70807552 flat_ticks=4
+2026-09-18T17:12:57Z tick t=201s free_kb=5373464 out_bytes=70807552 flat_ticks=5
+2026-09-18T17:13:17Z tick t=221s free_kb=5372644 out_bytes=70807552 flat_ticks=6
+2026-09-18T17:13:37Z tick t=242s free_kb=5369844 out_bytes=70807552 flat_ticks=7
+2026-09-18T17:13:58Z tick t=262s free_kb=5367212 out_bytes=70807552 flat_ticks=8
+2026-09-18T17:14:18Z tick t=282s free_kb=5369404 out_bytes=70807552 flat_ticks=9
+2026-09-18T17:14:38Z tick t=302s free_kb=5366612 out_bytes=70807552 flat_ticks=10
+2026-09-18T17:14:58Z tick t=322s free_kb=5367176 out_bytes=70807552 flat_ticks=11
+2026-09-18T17:15:18Z tick t=342s free_kb=5380136 out_bytes=70807552 flat_ticks=12
+2026-09-18T17:15:38Z tick t=362s free_kb=5377216 out_bytes=70807552 flat_ticks=13
+2026-09-18T17:15:58Z tick t=382s free_kb=5375524 out_bytes=70807552 flat_ticks=14
+2026-09-18T17:16:19Z tick t=403s free_kb=5375820 out_bytes=70807552 flat_ticks=15
+2026-09-18T17:16:19Z ABORT reason=stalled-no-output (free_kb=5375820 out_bytes=70807552)
+2026-09-18T17:16:19Z END rc=143 killed=1 reason=stalled-no-output secs=403 out_bytes=70807552 last_byte=5

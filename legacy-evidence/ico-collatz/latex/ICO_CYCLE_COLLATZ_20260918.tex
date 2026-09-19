@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+
+\title{ICO Cycle Report:\\Independent Verification of Lean Formalizations\\Related to the Collatz Conjecture}
+\author{BlackSwanLabz Research Lab}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+TODO: one paragraph once Phase 7--24 evidence exists. Do not write this first.
+\end{abstract}
+
+\section{Introduction}
+TODO.
+
+\section{Operational Truth}
+Lean 4.34.0, Mathlib commit \texttt{5ed2965256430c3649e86755f9576b54eca72435}
+(2026-09-15). Control project builds clean; 20 mini-lab theorems and 2
+Mathlib-backed sanity theorems kernel-checked (8924/8924 jobs). See
+\texttt{receipts/environment.md}.
+
+\section{Threat Model}
+See \texttt{reports/threat-model.md} for T1--T10. Summarized here once
+Phase 17 adversarial results exist.
+
+\section{Current Verification Model}
+TODO: what "trust" meant before this project (ad hoc / "does it compile").
+
+\section{Inversion}
+The inversion this project tests: instead of asking ``can Lean prove Collatz,''
+ask ``can our verification architecture be trusted to catch a proof that merely
+compiles but shouldn't be trusted.''
+
+\section{Positive Deviance}
+TODO: populate after Phase 15.
+
+\section{Mechanism}
+TODO: populate after Phase 16.
+
+\section{Adversarial Tests}
+TODO: populate after Phase 17 (attacks A--H against T1--T10).
+
+\section{Predictions}
+TODO: populate after Phase 20.
+
+\section{Experimental Environment}
+See \texttt{receipts/environment.md} and \texttt{receipts/cost-ledger.md}.
+
+\section{Results}
+TODO.
+
+\section{Axiom/Dependency Audit}
+TODO: populate after Phase 11 is run against the target repo.
+
+\section{Independent Checker Results}
+TODO: candidate is \texttt{nanoda}, per the Lean 4.32.2 release notes. Not yet
+installed or evaluated.
+
+\section{Semantic Correspondence}
+TODO: populate after Phase 12.
+
+\section{Capability Metric Contract}
+See \texttt{receipts/capability-metric-contract.md}.
+
+\section{Governance Decision}
+TODO: one of PROMOTE / REPAIR / REJECT / RESEARCH / STOP, with justification.
+
+\section{Correction Ledger}
+See \texttt{receipts/correction-ledger.md} (currently one entry: disk exhaustion
+during Mathlib cache fetch, unrelated to the target proof).
+
+\section{Limitations}
+TODO.
+
+\section{Next Action}
+TODO.
+
+\section{References}
+TODO: Lean 4.32.2 release notes, Lean install docs, Mathlib Reservoir page,
+target repository.
+
+\appendix
+\section{Appendices}
+TODO.
+
+\end{document}

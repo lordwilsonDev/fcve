@@ -1,0 +1,35 @@
+2026-09-18T17:34:23Z START decl=results_eliahou_theorem_1_1
+2026-09-18T17:34:23Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export/.lake/build/bin/lean4export Results -- results_eliahou_theorem_1_1 > /Users/lordwilson/ico-collatz/experiments/independent-checker/results_eliahou_theorem_1_1.export
+2026-09-18T17:34:23Z START disk: /dev/disk3s1s1   239362496  12345428   5207092    71%  458732 52070920    1%   /
+2026-09-18T17:34:43Z tick t=20s free_kb=5206084 out_bytes=0 flat_ticks=0
+2026-09-18T17:35:04Z tick t=41s free_kb=5205320 out_bytes=0 flat_ticks=1
+2026-09-18T17:35:24Z tick t=61s free_kb=5204980 out_bytes=0 flat_ticks=2
+2026-09-18T17:35:44Z tick t=81s free_kb=5204212 out_bytes=0 flat_ticks=3
+2026-09-18T17:36:04Z tick t=101s free_kb=5214352 out_bytes=0 flat_ticks=4
+2026-09-18T17:36:24Z tick t=121s free_kb=5213584 out_bytes=0 flat_ticks=5
+2026-09-18T17:36:45Z tick t=142s free_kb=5212420 out_bytes=0 flat_ticks=6
+2026-09-18T17:37:05Z tick t=162s free_kb=5210820 out_bytes=0 flat_ticks=7
+2026-09-18T17:37:25Z tick t=182s free_kb=5210004 out_bytes=0 flat_ticks=8
+2026-09-18T17:37:45Z tick t=202s free_kb=5210504 out_bytes=0 flat_ticks=9
+2026-09-18T17:38:05Z tick t=222s free_kb=5210196 out_bytes=0 flat_ticks=10
+2026-09-18T17:38:25Z tick t=242s free_kb=5209324 out_bytes=0 flat_ticks=11
+2026-09-18T17:38:45Z tick t=262s free_kb=5209168 out_bytes=0 flat_ticks=12
+2026-09-18T17:39:06Z tick t=283s free_kb=5220944 out_bytes=0 flat_ticks=13
+2026-09-18T17:39:26Z tick t=303s free_kb=4991472 out_bytes=71147520 flat_ticks=0
+2026-09-18T17:39:46Z tick t=323s free_kb=4991820 out_bytes=71147520 flat_ticks=1
+2026-09-18T17:40:06Z tick t=343s free_kb=4991208 out_bytes=71147520 flat_ticks=2
+2026-09-18T17:40:26Z tick t=363s free_kb=4989832 out_bytes=71147520 flat_ticks=3
+2026-09-18T17:40:46Z tick t=383s free_kb=4989620 out_bytes=71147520 flat_ticks=4
+2026-09-18T17:41:06Z tick t=403s free_kb=4989220 out_bytes=71147520 flat_ticks=5
+2026-09-18T17:41:26Z tick t=423s free_kb=4988360 out_bytes=71147520 flat_ticks=6
+2026-09-18T17:41:46Z tick t=443s free_kb=4988176 out_bytes=71147520 flat_ticks=7
+2026-09-18T17:42:06Z tick t=463s free_kb=4987920 out_bytes=71147520 flat_ticks=8
+2026-09-18T17:42:26Z tick t=483s free_kb=4987336 out_bytes=71147520 flat_ticks=9
+2026-09-18T17:42:46Z tick t=503s free_kb=4986976 out_bytes=71147520 flat_ticks=10
+2026-09-18T17:43:06Z tick t=523s free_kb=4986168 out_bytes=71147520 flat_ticks=11
+2026-09-18T17:43:26Z tick t=543s free_kb=4985808 out_bytes=71147520 flat_ticks=12
+2026-09-18T17:43:46Z tick t=563s free_kb=4985552 out_bytes=71147520 flat_ticks=13
+2026-09-18T17:44:06Z tick t=583s free_kb=4985096 out_bytes=71147520 flat_ticks=14
+2026-09-18T17:44:26Z tick t=603s free_kb=4984440 out_bytes=71147520 flat_ticks=15
+2026-09-18T17:44:26Z ABORT reason=stalled-no-output (free_kb=4984440 out_bytes=71147520)
+2026-09-18T17:44:26Z END rc=143 killed=1 reason=stalled-no-output secs=603 out_bytes=71147520 last_byte=e

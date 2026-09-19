@@ -1,0 +1,12 @@
+2026-09-18T16:59:32Z START decl=results_log2_three_lt_ratio
+2026-09-18T16:59:32Z START cmd: cd /Users/lordwilson/ico-collatz/targets/eliahou-collatz-bounds && lake env /Users/lordwilson/ico-collatz/targets/lean4export/.lake/build/bin/lean4export Results -- results_log2_three_lt_ratio > /Users/lordwilson/ico-collatz/experiments/independent-checker/results_log2_three_lt_ratio.export
+2026-09-18T16:59:32Z START disk: /dev/disk3s1s1   239362496  12345428   5396708    70%  458732 53967080    1%   /
+2026-09-18T16:59:52Z tick t=20s free_kb=5396540 out_bytes=0 flat_ticks=0
+2026-09-18T17:00:12Z tick t=40s free_kb=5396052 out_bytes=0 flat_ticks=1
+2026-09-18T17:00:32Z tick t=60s free_kb=5170736 out_bytes=0 flat_ticks=2
+2026-09-18T17:00:52Z tick t=80s free_kb=5404856 out_bytes=0 flat_ticks=3
+2026-09-18T17:01:12Z tick t=100s free_kb=5408056 out_bytes=0 flat_ticks=4
+2026-09-18T17:01:32Z tick t=120s free_kb=5338800 out_bytes=73777152 flat_ticks=0
+2026-09-18T17:01:52Z tick t=140s free_kb=5343928 out_bytes=73777152 flat_ticks=1
+2026-09-18T17:02:13Z tick t=161s free_kb=5343800 out_bytes=73777152 flat_ticks=2
+2026-09-18T17:02:33Z END rc=0 killed=0 reason=none secs=181 out_bytes=73780867 last_byte=\n

@@ -1,0 +1,14 @@
+2026-09-18T23:46:33Z START decl=powers_of_two_reach_one
+2026-09-18T23:46:33Z START cmd: cd /Users/lordwilson/ico-collatz/ico_collatz_verification && lake env /Users/lordwilson/ico-collatz/targets/lean4export-v4.34.0/.lake/build/bin/lean4export IcoCollatzVerification.PowersOfTwoReachOne -- powers_of_two_reach_one > /Users/lordwilson/ico-collatz/experiments/independent-checker/soft-problem/powers_of_two_reach_one.export
+2026-09-18T23:46:33Z START disk: /dev/disk3s1s1   239362496  12345428   3904356    76%  458732 39043560    1%   /
+2026-09-18T23:46:53Z tick t=20s free_kb=3903680 out_bytes=0 flat_ticks=0
+2026-09-18T23:47:13Z tick t=40s free_kb=3903132 out_bytes=0 flat_ticks=1
+2026-09-18T23:47:33Z tick t=60s free_kb=3902384 out_bytes=0 flat_ticks=2
+2026-09-18T23:47:53Z tick t=80s free_kb=3896668 out_bytes=0 flat_ticks=3
+2026-09-18T23:48:13Z tick t=100s free_kb=3896984 out_bytes=0 flat_ticks=4
+2026-09-18T23:48:33Z tick t=120s free_kb=3896896 out_bytes=0 flat_ticks=5
+2026-09-18T23:48:53Z tick t=140s free_kb=3892012 out_bytes=0 flat_ticks=6
+2026-09-18T23:49:13Z tick t=160s free_kb=3890860 out_bytes=0 flat_ticks=7
+2026-09-18T23:49:34Z tick t=181s free_kb=3882392 out_bytes=4739072 flat_ticks=0
+2026-09-18T23:49:54Z tick t=201s free_kb=3874764 out_bytes=4739072 flat_ticks=1
+2026-09-18T23:50:14Z END rc=0 killed=0 reason=none secs=221 out_bytes=4742118 last_byte=\n

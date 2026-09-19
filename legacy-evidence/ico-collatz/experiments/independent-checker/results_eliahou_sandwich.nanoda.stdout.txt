@@ -1,0 +1,19 @@
+theorem results_eliahou_sandwich :
+  forall {L : Nat} (c : CollatzCycle L),
+  And
+    (LE.le
+      (Real.logb (OfNat.ofNat 2)
+        (HAdd.hAdd (OfNat.ofNat 3) (HDiv.hDiv (OfNat.ofNat 1) (Nat.cast (CollatzCycle.maxElem c)))))
+      (HDiv.hDiv (Nat.cast L) (Nat.cast (CollatzCycle.numOdd c))))
+    (LE.le (HDiv.hDiv (Nat.cast L) (Nat.cast (CollatzCycle.numOdd c)))
+      (Real.logb (OfNat.ofNat 2)
+        (HAdd.hAdd (OfNat.ofNat 3) (HDiv.hDiv (OfNat.ofNat 1) (Nat.cast (CollatzCycle.minElem c)))))) :=
+  _
+
+axiom propext {a b : Prop} : Iff a b → Eq a b
+
+axiom Quot.sound.{u} {α : Sort u} {r : α → α → Prop} {a b : α} : r a b → Eq (Quot.mk r a) (Quot.mk r b)
+
+axiom Classical.choice.{u} {α : Sort u} : Nonempty α → α
+
+Checked 17320 declarations with no errors
