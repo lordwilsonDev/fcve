@@ -175,7 +175,9 @@
     "legacy-evidence/README.md",
     "legacy-evidence/MANIFEST.sha256",
     "scripts/restore.sh",
-    "docs/RESTORE.md"
+    "docs/RESTORE.md",
+    "LICENSE",
+    "NOTICE"
   ],
   "expected_skill_files": [
     "skills/verifying-lean-proofs/SKILL.md",

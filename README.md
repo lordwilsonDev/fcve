@@ -70,7 +70,7 @@ Disk: measured on the validated Mac mini — hard floor **1.5 GiB free**, **3 Gi
 ## 7. Installation
 
 ```bash
-git clone https://github.com/lordwilsonDev/fcve.git && cd fcve     # private repo
+git clone https://github.com/lordwilsonDev/fcve.git && cd fcve     # public repo
 scripts/doctor.sh                       # what is missing? (a fresh clone will show FAIL for tools not built yet)
 scripts/setup.sh                        # builds/verifies the checker tools under .fcve-work/ ; safe to repeat
 #   scripts/setup.sh --reuse-from ~/ico-collatz/targets      # adopt already-built, VERIFIED tools instead of rebuilding (saves ~0.5 GB)
@@ -190,7 +190,7 @@ procedure (fresh clone → fresh Claude session → setup → doctor → smoke �
 
 ## 20. Version / Release Information
 
-No tagged release. The repository is identified by commit (`git rev-parse HEAD`; the doctor prints it and `setup-record.json` stores it). The environment manifest is schema 1, validated 2026-09-19.
+**License:** Apache-2.0 (`LICENSE`; third-party notes in `NOTICE`). No tagged release. The repository is identified by commit (`git rev-parse HEAD`; the doctor prints it and `setup-record.json` stores it). The environment manifest is schema 1, validated 2026-09-19.
 
 ## 21. Known Limitations
 
@@ -199,7 +199,7 @@ No tagged release. The repository is identified by commit (`git rev-parse HEAD`;
 - The ledger is tamper-evident, not tamper-proof. Repository/commit facts for the two delivered runs were captured after the runs.
 - The patched tools are unreviewed by their upstream maintainers (PRs open); the exporter patch was not built on upstream's current toolchain (v4.35.0-rc2).
 - Real Lean builds need ~3 GB free; a disk below the floor blocks audits (reported as UNRESOLVED). A from-scratch rebuild of the checker tools does not fit on a nearly full disk.
-- Compiled reports use `tectonic`, not the `pdflatex` the spec names. No license has been chosen.
+- Compiled reports use `tectonic`, not the `pdflatex` the spec names. Licensed under the Apache License 2.0 (see `LICENSE` and `NOTICE`).
 
 ## 22. Research / Engineering Notes
 

@@ -614,6 +614,24 @@ class RestoreScript(unittest.TestCase):
         self.assertEqual(m["commit"], "db804ce6305ea99a817f067869607f8b677d895a"); self.assertEqual(m["sha256"], "077292bebdf53a6e06d92fb475ce395ee1c8af4cc3e9f5c2e4620b2e35134689")
         self.assertEqual(jload(os.path.join(ROOT, "verification", "source", "source-metadata.json"))["source_sha256"], m["sha256"])
 
+
+class License(unittest.TestCase):
+    """The repo is public; without a license others have no right to reuse it. Apache-2.0, unmodified, with NOTICE for the derived patches."""
+    def test_license_is_the_unmodified_apache_2_0_text(self):
+        with open(os.path.join(ROOT, "LICENSE"), "rb") as f: data = f.read()
+        self.assertEqual(hashlib.sha256(data).hexdigest(), "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30")   # apache.org/licenses/LICENSE-2.0.txt
+        self.assertEqual(len(data), 11358)
+
+    def test_notice_credits_the_upstreams_the_patches_derive_from(self):
+        with open(os.path.join(ROOT, "NOTICE")) as f: n = f.read()
+        for needle in ("Apache License, Version 2.0", "lean4export", "nanoda_lib", "derivative works", "does NOT contain the source papers"): self.assertIn(needle, n, needle)
+
+    def test_docs_no_longer_claim_no_license_or_private_repos(self):
+        for rel in ("README.md", "HANDOFF.md", "docs/RESTORE.md", "docs/LOADING-CHECK.md"):
+            with open(os.path.join(ROOT, rel)) as f: txt = f.read()
+            self.assertNotIn("No license has been chosen", txt, rel); self.assertNotIn("# private repo", txt, rel)
+        with open(os.path.join(ROOT, "README.md")) as f: self.assertIn("Apache License 2.0", f.read())
+
 # ------------------------------------------------------------------------------------------------------------ slow tier
 @unittest.skipUnless(FULL and have_setup, "slow tier: set FCVE_TEST_FULL=1 and run scripts/setup.sh first")
 class SlowTier(unittest.TestCase):

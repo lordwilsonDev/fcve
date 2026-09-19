@@ -1,6 +1,6 @@
 # Restoring from zero (delete everything, redownload, get back to the current state)
 
-**Checked 2026-09-19 before a planned wipe.** Everything committed to the two private repos comes back with `git clone`. This page lists what a clone does *not* carry and how each piece is restored or rebuilt.
+**Checked 2026-09-19 before a planned wipe.** Everything committed to the two GitHub repos comes back with `git clone`. This page lists what a clone does *not* carry and how each piece is restored or rebuilt.
 Nothing below deletes anything; the destructive step (wiping) is yours.
 
 ## 0. Before you wipe: is everything pushed?

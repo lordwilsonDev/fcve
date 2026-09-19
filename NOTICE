@@ -1,0 +1,17 @@
+FCVE — Formal Claim Verification Engine
+Copyright 2026 lordwilsonDev
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party material and derived works:
+
+* tool-patches/*.diff (and the copies under skills/verifying-lean-proofs/patches/) are patches to, and therefore derivative works of:
+    - lean4export (https://github.com/leanprover/lean4export), Apache License 2.0
+    - nanoda_lib  (https://github.com/ammkrn/nanoda_lib),      Apache License 2.0
+  The patched files remain under their upstream licenses. The same changes are proposed upstream as
+  leanprover/lean4export#52 and ammkrn/nanoda_lib#36.
+
+* This repository does NOT contain the source papers it verifies (they are third-party works and are not redistributed;
+  see .gitignore and scripts/restore.sh). References to them are citations and sha256 hashes only.
+
+* Lean 4, Mathlib and the other tools FCVE drives are separate projects under their own licenses and are not distributed here.

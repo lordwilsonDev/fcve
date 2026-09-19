@@ -6,7 +6,7 @@ the weak link (a Hermes one-shot on the default free model answered correctly on
 ## Quick start for someone using the free tools
 
 ```bash
-git clone https://github.com/lordwilsonDev/fcve.git && cd fcve         # private repo: needs access
+git clone https://github.com/lordwilsonDev/fcve.git && cd fcve         # public repo
 scripts/doctor.sh                       # environment: PASS / WARN / FAIL / UNRESOLVED
 scripts/setup.sh                        # only if the doctor says tools are missing (add --reuse-from DIR to adopt existing builds)
 scripts/smoke-test.sh                   # must end with: SMOKE TEST PASSED
