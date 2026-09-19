@@ -72,6 +72,10 @@ recorded PROMOTE and an issued deliverable. What is left is mostly decisions and
 - **Upstream PRs opened (from `lordwilsonDev` forks):** `leanprover/lean4export#52` (sub-quadratic natVal printing) and `ammkrn/nanoda_lib#36` (sub-quadratic decimal parse). Bodies state the diagnosis, evidence, and that the exporter patch was NOT built on upstream's v4.35.0-rc2 (disk). Watch for maintainer feedback; nothing merged. Until merged, patched builds + `tool-patches/` are needed.
 - **Upgraded `verifying-lean-proofs` skill tried on the 3 theorems that Phase 18 had BLOCKED** (`~/ico-collatz/experiments/independent-checker/skill-run2/`): `results_rational_approx_bound` PASS (16,940 decls), `results_eliahou_bound` PASS (17,493), `results_eliahou_bound_card` PASS (17,505). With the five earlier passes, all 9 paper-facing declarations of eliahou-collatz-bounds are now independently checked (the four formerly blocked ones with patched tools). Caveat: printed target + "no errors" confirmed; the checker's axiom sets for these three were not compared to a fresh row-6 audit. Not in any FCVE report.
 
+## Update — one-command audit wrapper (2026-09-19)
+- `skills/verifying-lean-proofs/scripts/audit.sh` runs rows 1-6, 8, 10 and writes `AUDIT.md` (verdict max PROVISIONAL; rows 7/9 need a human/web). Tested on two projects/toolchains (eliahou-collatz-bounds @4.28.0, ico-collatz-verification @4.34.0); examples in `skills/.../examples/`. Measured: ~26 min (2 decls, incl. a ~6 min stalled upstream attempt) and ~5 min (1 decl); row 6 is dominated by importing Mathlib (~2-3 min). Bugs found by running it: BUG-006. Linux untested.
+- Observed: an orphaned stalled `lean4export` (pid 83961, ~14 h old, from the earlier Phase-18 retry) was still running; left alone (not started this session).
+
 ## Open items (recommended order)
 1. ~~Confirm the two drafted limitation records~~ — **DONE 2026-09-19**: Wilson confirmed both; copies with `reviewer: Wilson` are in
    `reviewed-records/vce-00{1,2}-reviewer-limitations.json` (`limitations-check` = CONFIRMED). Drafts left in `proposed-records/`. Delivered

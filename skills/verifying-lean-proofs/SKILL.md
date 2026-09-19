@@ -35,7 +35,36 @@ work), or trivial one-line sanity checks where a `#print axioms` by hand is
 obviously enough — this is for when the claim matters enough to check
 properly.
 
-## Workflow
+## Fast path: one command
+
+```bash
+scripts/audit.sh <target-dir> --module <Module> --decl <theorem> [--decl <theorem2> ...] \
+    [--fast-literals auto|yes|no] [--out <dir>] [--work <dir>] [--rebuild]
+```
+
+Runs rows 1-6, 8 and 10 and writes `AUDIT.md` (the filled matrix, a verdict, and per-step timings). It **cannot** do
+row 7 (a human reads the claim against the Lean statement) or row 9 (needs the web), so the best it reaches is
+**PROVISIONAL** — never TRUSTED — and it says which rows keep it there. It never edits the target. Run it detached
+if it may outlive your turn. `--fast-literals auto` tries upstream tools first and, if an export stalls, builds the
+patched fast-literal tools and retries (disclosed in the output); use `yes` when you already know the proof has huge
+literals (saves the ~6-minute stall wait), `no` to forbid patched tools. Two real runs are in `examples/`.
+
+Measured on an Apple-silicon Mac (one run each, not benchmarks; your Mathlib import time will vary):
+
+| step | eliahou-collatz-bounds (2 decls, 4.28.0) | ico-collatz-verification (1 decl, 4.34.0) |
+|---|---|---|
+| rows 1-5, 8 (git, toolchain, build reuse, sorry scan, staleness) | ~8 s | ~10 s |
+| row 6 axioms (one `lake env lean`; dominated by importing Mathlib) | 151 s | 197 s |
+| row 10 independent check | 697 s (346 s of it a stalled upstream attempt, then patched: 350 s) | 40 s |
+| clean tool setup (measured separately, fresh clone) | 23 s pristine + 39 s patched | — |
+| **total** | **~26 min** | **~5 min** |
+
+Fixed costs it does not remove: the Lean toolchain (~2.5 GB each), the Mathlib cache (~9-10 GB), the target's own
+build, and ~3 GB of free disk (exports are 50-200 MB each; the export guard aborts under 1.5 GB and reports
+UNRESOLVED, not a failure). Portability: written and tested on macOS only; the Linux paths (`stat`, no `sample`)
+are untested.
+
+## Workflow (what audit.sh automates, step by step)
 
 1. Copy `PROOF-TRUST-MATRIX.md` into your output. Fill rows 1-2 by reading
    the repo (commit, `lean-toolchain`, Mathlib rev) — do not proceed on
@@ -158,6 +187,7 @@ reasons are in `LESSONS.md` sections B–C.
 
 | Script | Answers |
 |---|---|
+| `audit.sh <dir> --module M --decl D ...` | **the whole matrix in one command**: filled `AUDIT.md`, verdict (max PROVISIONAL), timings |
 | `source-inventory.sh <dir>` | file/theorem/def/axiom/unsafe counts (row 1 sanity, row 6 setup) |
 | `sorry-audit.sh <dir>` | sorry/admit/native_decide counts + locations (rows 4-5) |
 | `axiom-audit.sh <dir> <theorem>` | prints the `#print axioms` command to run (row 6) |

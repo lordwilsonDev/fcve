@@ -65,3 +65,12 @@ skill's own scripts* are in `BUGS.md`; this file is what the audits taught about
     Check the target's pinned version against these and the release notes; mark UNRESOLVED if you can't.
 23. **Independence has layers.** A second *checker* is independent of Lean's kernel; it is not an independent *reviewer*. Semantic
     judgments (bridge verdict, limitations, decision) stay with a named human; a model may draft, never certify its own draft.
+
+## E. Writing the tooling itself
+
+24. **`bash -n` is not a test, and bash runs a script up to its first parse error.** A syntax error inside a function that is defined later
+    only appears when execution reaches it, after earlier steps have already run. Do a real run before trusting a new script.
+25. **"Not PASS" is not "FAIL".** A guard abort, a stall and a tool error are all *no verdict*; report them as UNRESOLVED and say so. Mapping them to
+    REJECTED would turn a full disk into a claim that a proof is wrong.
+26. **Measure the expensive step before deciding what to optimize.** Importing Mathlib (~2-3 min each) dwarfed everything else in the axiom row, so batching
+    declarations into one Lean file saved more than any other change. Exports left on disk, meanwhile, silently broke the next run.

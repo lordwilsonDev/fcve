@@ -29,11 +29,14 @@
 # legitimately take minutes before the first byte. Only a stream that has
 # already started emitting and then stops is "stalled".
 set -u
+# GNU stat first: on Linux `stat -f` means filesystem status, not size. (Linux path untested here.)
+fsize() { stat -c%s "$1" 2>/dev/null || stat -f%z "$1" 2>/dev/null; }
 
 TARGET="" MODULE="" EXPORT_BIN="" NANODA_BIN="" OUT_DIR="./independent-check-out"
 AXIOMS="propext,Classical.choice,Quot.sound"
 TICK_SECONDS=20
-STALL_TICKS=15
+STALL_TICKS=${STALL_TICKS:-15}   # x TICK_SECONDS of flat NON-ZERO output = stalled (override via env)
+DELETE_EXPORTS=0
 MAX_SECONDS=900
 FREE_KB_FLOOR=$((1500 * 1024))
 
@@ -45,6 +48,7 @@ while [ $# -gt 0 ]; do
     --nanoda-bin) NANODA_BIN="$2"; shift 2 ;;
     --out) OUT_DIR="$2"; shift 2 ;;
     --axioms) AXIOMS="$2"; shift 2 ;;
+    --delete-exports) DELETE_EXPORTS=1; shift ;;
     --) shift; break ;;
     -*) echo "unknown flag: $1" >&2; exit 1 ;;
     *) break ;;
@@ -97,7 +101,7 @@ run_export() { # $1 = decl, $2 = out path, $3 = err path, $4 = mon path
     sleep "$TICK_SECONDS"
     kill -0 "$pid" 2>/dev/null || break
     free=$(df -k / | tail -1 | awk '{print $4}'); [ -n "$free" ] || free=0
-    sz=$(stat -f%z "$out" 2>/dev/null); [ -n "$sz" ] || sz=0
+    sz=$(fsize "$out"); [ -n "$sz" ] || sz=0
     if [ "$sz" -eq "$last_sz" ]; then flat_ticks=$((flat_ticks + 1)); else flat_ticks=0; last_sz=$sz; fi
     printf '%s tick t=%ss free_kb=%s out_bytes=%s flat_ticks=%s\n' \
       "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(( $(date +%s) - start_epoch ))" "$free" "$sz" "$flat_ticks" >>"$mon"
@@ -123,7 +127,7 @@ run_export() { # $1 = decl, $2 = out path, $3 = err path, $4 = mon path
 
   wait "$pid"; local rc=$?
   local secs=$(( $(date +%s) - start_epoch ))
-  sz=$(stat -f%z "$out" 2>/dev/null); [ -n "$sz" ] || sz=0
+  sz=$(fsize "$out"); [ -n "$sz" ] || sz=0
   local tail_ch; tail_ch=$(tail -c1 "$out" 2>/dev/null | od -An -c | tr -d ' ')
   printf '%s END rc=%s killed=%s reason=%s secs=%s out_bytes=%s last_byte=%s\n' \
     "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$rc" "$killed" "${reason:-none}" "$secs" "$sz" "$tail_ch" >>"$mon"
@@ -145,6 +149,7 @@ for DECL in "$@"; do
   if [ "$EXPORT_COMPLETE" -ne 1 ]; then
     printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$DECL" BLOCKED export \
       "$EXPORT_SECS" "$EXPORT_BYTES" - - "$EXPORT_REASON/rc=$EXPORT_RC" >>"$SUMMARY"
+    [ "$DELETE_EXPORTS" = 1 ] && rm -f "$OUT"
     continue
   fi
   if ! grep -qF "$DECL" "$OUT"; then
@@ -182,6 +187,10 @@ PY
   fi
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$DECL" "$STATUS" nanoda \
     "$EXPORT_SECS" "$EXPORT_BYTES" "$NRC" "$CHECKED" - >>"$SUMMARY"
+  if [ "$DELETE_EXPORTS" = 1 ] && [ -f "$OUT" ]; then
+    printf '%s EXPORT_SHA256 %s bytes=%s (file deleted after check: --delete-exports)\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(shasum -a 256 "$OUT" | cut -d' ' -f1)" "$(fsize "$OUT")" >>"$MON"
+    rm -f "$OUT"
+  fi
 done
 
 echo "--- results ---"

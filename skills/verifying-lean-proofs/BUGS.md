@@ -138,3 +138,15 @@ the original directory. nanoda printed `failed to open configuration file` and e
 ## BUG-005: setup script gave no way to build the fast-literal tools
 
 **Status:** Fixed 2026-09-19. `FAST_LITERALS=1 setup-independent-checker.sh` builds patched copies from `patches/` beside the pristine ones, refuses patches that don't apply, and runs their equivalence tests (`NatReprCheck.lean`, `cargo test parse_decimal`). Verified from a clean clone: lean4export v4.28.0 @ d065b00, nanoda_lib @ 4c544ed, then the headline theorem re-checked end to end (17,464 declarations) with the skill's own script.
+
+---
+
+## BUG-006: `audit.sh` first drafts (all found by running them, none by reading them)
+
+**Status:** Fixed 2026-09-19.
+1. **Syntax error only surfaced mid-run.** A missing `}` in the row-3 function; bash parses function bodies lazily, so rows 1-2 ran and *then* the script died. Always `bash -n` AND do a real run before trusting a script.
+2. **A blocked export was reported as REJECTED.** The disk guard aborted an export (free space < 1.5 GB), the wrapper counted "not PASS" as FAIL and produced a REJECTED verdict. BLOCKED/TOOL_ERROR now give row 10 = UNRESOLVED ("this is NOT a rejection"); only a checker-reported FAIL is FAIL.
+3. **Row 6 re-imported Mathlib once per declaration** (~2 min each, measured). Now one `lake env lean` file with all `#print axioms` (270 s -> 151 s for two declarations).
+4. **Exports were kept after checking**, eating 50-200 MB each and tripping the disk guard on a 2 GB-free machine. `independent-check.sh --delete-exports` (used by audit.sh) records the export's sha256 in the monitor log and removes the file.
+5. **The stall wait was 5 minutes** even for the disposable upstream attempt in `auto` mode; `STALL_TICKS` is now overridable and `auto` uses 6 (2 min of flat non-zero output).
+Verified: two full audits (different projects, Lean 4.28.0 and 4.34.0) reach PROVISIONAL with the expected rows; see `examples/`.
