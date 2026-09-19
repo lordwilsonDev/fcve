@@ -7,7 +7,13 @@ def led(v): return os.path.join(ROOT, v, "evidence", "event-ledger.jsonl")
 def hand(v): return open(os.path.join(ROOT, v, "receipt", "verification-receipt.md")).read()
 R1 = fr.build_receipt(led("verification")); R2 = fr.build_receipt(led("verification-002"))
 
+# The delivered VCE-001 run hashes verification/source/original.pdf (Eliahou's paper). That third-party PDF is deliberately NOT in the repository
+# (.gitignore, copyright), so on a fresh clone these tests cannot run: they SKIP with this reason, visibly, instead of failing or (worse) passing.
+_PDF = os.path.join(ROOT, "verification", "source", "original.pdf")
+needs_source_pdf = unittest.skipUnless(os.path.exists(_PDF), "third-party source PDF verification/source/original.pdf is not in the repository (gitignored, copyright); place it there to run this test")
+
 class AgainstHandWrittenReceipts(unittest.TestCase):
+    @needs_source_pdf
     def test_source_hashes_match_the_hand_receipts(self):
         for v, R in (("verification", R1), ("verification-002", R2)):
             h = re.search(r"sha256:([0-9a-f]{64})", R["fields"]["SOURCE HASH"]).group(1)
@@ -16,6 +22,7 @@ class AgainstHandWrittenReceipts(unittest.TestCase):
     def test_decisions_match(self):
         self.assertEqual((R1["decision"], R2["decision"]), ("REPAIR", "PROMOTE"))
 
+    @needs_source_pdf
     def test_repro_levels_match_hand_receipts(self):
         self.assertEqual((R1["repro_level"], R2["repro_level"]), (3, 4))
 

@@ -74,3 +74,6 @@ skill's own scripts* are in `BUGS.md`; this file is what the audits taught about
     REJECTED would turn a full disk into a claim that a proof is wrong.
 26. **Measure the expensive step before deciding what to optimize.** Importing Mathlib (~2-3 min each) dwarfed everything else in the axiom row, so batching
     declarations into one Lean file saved more than any other change. Exports left on disk, meanwhile, silently broke the next run.
+27. **A test that passes only because of an untracked file is machine-specific state.** Run the tests from a fresh clone of the *pushed* repository, not your working tree. The first clean-room runs failed on a
+    gitignored third-party PDF the author had never noticed the tests depended on (BUG-008). A skipped test must say so; a bare OK that hides skips is a false green.
+28. **Never edit a script while it is running** (BUG-009): bash reads by byte offset.

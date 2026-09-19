@@ -47,7 +47,9 @@ need "skill: CLAUDE.md tells Claude to read it" "grep -q 'skills/verifying-lean-
 
 # 4. the engine's own fast tests (pure Python; no Lean needed)
 for t in evidence claims graph receipt limits; do
-  ( cd "$FCVE_ROOT" && python3 "tests/test_fcve_$t.py" >"$OUT/test_$t.log" 2>&1 ); need "engine test suite: $t" "[ $? -eq 0 ]" "see $OUT/test_$t.log"
+  ( cd "$FCVE_ROOT" && python3 "tests/test_fcve_$t.py" >"$OUT/test_$t.log" 2>&1 ); TRC=$?
+  SKIPS=$(tail -3 "$OUT/test_$t.log" | grep -o 'skipped=[0-9]*' | head -1)
+  need "engine test suite: $t${SKIPS:+ ($SKIPS -- skipped, NOT passed; see $OUT/test_$t.log)}" "[ $TRC -eq 0 ]" "see $OUT/test_$t.log"
 done
 
 # 5. evidence integrity of the delivered packages: hash chain, order, receipt currency, manifest checksums

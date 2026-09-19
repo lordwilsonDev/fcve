@@ -163,3 +163,18 @@ Verified: two full audits (different projects, Lean 4.28.0 and 4.34.0) reach PRO
 
 While writing `tests/test_bootstrap.py`, the first "tampered ledger" test replaced `"PASS"` in a line that contained no `"PASS"` and fell back to appending a space, so it verified an *unmodified* ledger and the assertion failed. The fixed
 tests assert `modified != original` before trusting a control (`assertNotEqual(ev, before, "control must actually change …")`). The lesson (LESSONS.md B9) is now enforced in code, not just written down.
+
+---
+
+## BUG-008: tests that pass only because a gitignored file happens to exist (found by the first clean-room runs)
+
+**Status:** Fixed 2026-09-19. **Found by:** `scripts/clean-room.sh` runs 1-3 (all FAIL, kept as records in `docs/clean-room-records/`).
+`tests/test_fcve_receipt.py` hashes `verification/source/original.pdf` (a third party's paper). That file is deliberately not in the repository (`.gitignore`), so the suite passed on the author's machine and
+**failed on every fresh clone** — machine-specific state hidden from the author. Nothing else in the fast suites depended on it (verified by running all suites from a `git archive` of HEAD).
+**Fix:** the two PDF-dependent tests now `skipUnless` the file exists, with the reason printed; `smoke-test.sh` now reports `(skipped=N -- skipped, NOT passed)` instead of a bare OK, so a skip cannot pass as a pass.
+**Rule:** any test that reads a gitignored path must skip loudly, and the clean room (fresh clone from the *remote*, not the working tree) is the only place this class of bug shows.
+
+## BUG-009: editing a bash script while it is running corrupts the run
+
+**Status:** Noted 2026-09-19. `scripts/clean-room.sh` was edited in place while a 3-run job was executing it; bash reads a script incrementally by byte offset, so the edit shifted the file and the job ended with `line 73: e: command not found`
+(harmless here — it was the final `exit` line — but the same edit could have run a wrong command mid-script). **Rule:** never edit a script that a running job is executing; wait, or copy to a new path first.

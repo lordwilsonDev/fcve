@@ -14,30 +14,87 @@
     "note": "Only this environment has been validated. Other Macs, other macOS versions and Linux are untested; the doctor reports a difference as WARN (unvalidated), not as an error."
   },
   "required_tools": {
-    "git":      {"validated": "2.53.0",  "required": true,  "role": "source pinning, repo state"},
-    "bash":     {"validated": "5.3.9",   "required": true,  "role": "all scripts"},
-    "python3":  {"validated": "3.12.9",  "required": true,  "role": "FCVE engine and tests (standard library only)"},
-    "patch":    {"validated": "system",  "required": true,  "role": "applying tool-patches"},
-    "shasum":   {"validated": "system",  "required": true,  "role": "evidence hashes"},
-    "rsync":    {"validated": "system",  "required": false, "role": "syncing the skill copy"},
-    "sample":   {"validated": "system",  "required": false, "role": "stack sample of a stalled export (macOS only)"},
-    "elan":     {"validated": "4.2.4",   "required": true,  "role": "Lean toolchain manager"},
-    "lake":     {"validated": "5.0.0",   "required": true,  "role": "Lean build tool (comes with the toolchain)"},
-    "rustc":    {"validated": "1.92.0",  "required": true,  "role": "builds nanoda_lib (independent checker)"},
-    "cargo":    {"validated": "1.92.0",  "required": true,  "role": "builds nanoda_lib"},
-    "tectonic": {"validated": "0.17.0",  "required": false, "role": "compiles FCVE reports (not needed for audit.sh)"}
+    "git": {
+      "validated": "2.53.0",
+      "required": true,
+      "role": "source pinning, repo state"
+    },
+    "bash": {
+      "validated": "5.3.9",
+      "required": true,
+      "role": "all scripts"
+    },
+    "python3": {
+      "validated": "3.12.9",
+      "required": true,
+      "role": "FCVE engine and tests (standard library only)"
+    },
+    "patch": {
+      "validated": "system",
+      "required": true,
+      "role": "applying tool-patches"
+    },
+    "shasum": {
+      "validated": "system",
+      "required": true,
+      "role": "evidence hashes"
+    },
+    "rsync": {
+      "validated": "system",
+      "required": false,
+      "role": "syncing the skill copy"
+    },
+    "sample": {
+      "validated": "system",
+      "required": false,
+      "role": "stack sample of a stalled export (macOS only)"
+    },
+    "elan": {
+      "validated": "4.2.4",
+      "required": true,
+      "role": "Lean toolchain manager"
+    },
+    "lake": {
+      "validated": "5.0.0",
+      "required": true,
+      "role": "Lean build tool (comes with the toolchain)"
+    },
+    "rustc": {
+      "validated": "1.92.0",
+      "required": true,
+      "role": "builds nanoda_lib (independent checker)"
+    },
+    "cargo": {
+      "validated": "1.92.0",
+      "required": true,
+      "role": "builds nanoda_lib"
+    },
+    "tectonic": {
+      "validated": "0.17.0",
+      "required": false,
+      "role": "compiles FCVE reports (not needed for audit.sh)"
+    }
   },
   "lean": {
     "toolchains": [
-      {"tag": "v4.28.0", "validated_with": "tangentstorm/eliahou-collatz-bounds @ db804ce6305e (Mathlib 8f9d9cff6bd7)"},
-      {"tag": "v4.34.0", "validated_with": "lordwilsonDev/ico-collatz-verification @ 409c4c3b6f01 (Mathlib 5ed296525643)"}
+      {
+        "tag": "v4.28.0",
+        "validated_with": "tangentstorm/eliahou-collatz-bounds @ db804ce6305e (Mathlib 8f9d9cff6bd7)"
+      },
+      {
+        "tag": "v4.34.0",
+        "validated_with": "lordwilsonDev/ico-collatz-verification @ 409c4c3b6f01 (Mathlib 5ed296525643)"
+      }
     ],
     "note": "Mathlib revisions are per target project (its lake-manifest.json), not global. A toolchain tag must match the target's lean-toolchain exactly; lean4export is built per tag."
   },
   "independent_checker": {
     "lean4export": {
       "upstream": "https://github.com/leanprover/lean4export",
-      "validated_commits": {"v4.28.0": "d065b0009aed0520e9e99752847a33b337661690", "v4.34.0": "076e8e57707e813375e8f9da8bf989799ace9680"}
+      "validated_commits": {
+        "v4.28.0": "d065b0009aed0520e9e99752847a33b337661690",
+        "v4.34.0": "076e8e57707e813375e8f9da8bf989799ace9680"
+      }
     },
     "nanoda_lib": {
       "upstream": "https://github.com/ammkrn/nanoda_lib",
@@ -47,8 +104,23 @@
   "tool_patches": {
     "policy": "Patched tools are optional and always disclosed. A verdict from them must say PATCHED, name the patch hashes below, and cite the validation (equivalence test, regression, negative control). Upstream PRs: leanprover/lean4export#52, ammkrn/nanoda_lib#36 (open, not merged).",
     "patches": [
-      {"name": "lean4export-fast-natval", "file": "tool-patches/lean4export-fast-natval.diff", "sha256": "11f0d0fcd591eaf29d754fe45fb17aea153c9b0339d44d0735b311f68d0f6c60", "applies_to": "lean4export Export.lean", "validated_toolchains": ["v4.28.0", "v4.34.0"]},
-      {"name": "nanoda-fast-decimal-parse", "file": "tool-patches/nanoda-fast-decimal-parse.diff", "sha256": "5f9469927cb14ec17e5d7f36ace5c1f2093fe5e9fd07e450f2e8c70a63e1bf92", "applies_to": "nanoda_lib src/parser.rs", "validated_commit": "4c544ed4099c8227f07d5de77ad1e69fb0740a27"}
+      {
+        "name": "lean4export-fast-natval",
+        "file": "tool-patches/lean4export-fast-natval.diff",
+        "sha256": "11f0d0fcd591eaf29d754fe45fb17aea153c9b0339d44d0735b311f68d0f6c60",
+        "applies_to": "lean4export Export.lean",
+        "validated_toolchains": [
+          "v4.28.0",
+          "v4.34.0"
+        ]
+      },
+      {
+        "name": "nanoda-fast-decimal-parse",
+        "file": "tool-patches/nanoda-fast-decimal-parse.diff",
+        "sha256": "5f9469927cb14ec17e5d7f36ace5c1f2093fe5e9fd07e450f2e8c70a63e1bf92",
+        "applies_to": "nanoda_lib src/parser.rs",
+        "validated_commit": "4c544ed4099c8227f07d5de77ad1e69fb0740a27"
+      }
     ]
   },
   "measured_requirements": {
@@ -76,12 +148,24 @@
     }
   },
   "expected_files": [
-    "README.md", "CLAUDE.md", "SPECIFICATION.md", "HANDOFF.md",
+    "README.md",
+    "CLAUDE.md",
+    "SPECIFICATION.md",
+    "HANDOFF.md",
     "manifests/environment.json",
-    "scripts/fcve.py", "scripts/setup.sh", "scripts/doctor.sh", "scripts/smoke-test.sh", "scripts/audit.sh", "scripts/run-tests.sh", "scripts/lib/common.sh",
+    "scripts/fcve.py",
+    "scripts/setup.sh",
+    "scripts/doctor.sh",
+    "scripts/smoke-test.sh",
+    "scripts/audit.sh",
+    "scripts/run-tests.sh",
+    "scripts/clean-room.sh",
+    "scripts/lib/common.sh",
     "docs/CLEAN_ROOM_REPRODUCIBILITY.md",
-    "tool-patches/lean4export-fast-natval.diff", "tool-patches/nanoda-fast-decimal-parse.diff",
-    "tests/fixtures/mini-lean-ok/Mini.lean", "tests/fixtures/mini-lean-bad/Mini.lean"
+    "tool-patches/lean4export-fast-natval.diff",
+    "tool-patches/nanoda-fast-decimal-parse.diff",
+    "tests/fixtures/mini-lean-ok/Mini.lean",
+    "tests/fixtures/mini-lean-bad/Mini.lean"
   ],
   "expected_skill_files": [
     "skills/verifying-lean-proofs/SKILL.md",
