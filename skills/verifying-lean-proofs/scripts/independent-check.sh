@@ -34,7 +34,7 @@ fsize() { stat -c%s "$1" 2>/dev/null || stat -f%z "$1" 2>/dev/null; }
 
 TARGET="" MODULE="" EXPORT_BIN="" NANODA_BIN="" OUT_DIR="./independent-check-out"
 AXIOMS="propext,Classical.choice,Quot.sound"
-TICK_SECONDS=20
+TICK_SECONDS=${TICK_SECONDS:-20}
 STALL_TICKS=${STALL_TICKS:-15}   # x TICK_SECONDS of flat NON-ZERO output = stalled (override via env)
 DELETE_EXPORTS=0
 MAX_SECONDS=900
@@ -100,7 +100,7 @@ run_export() { # $1 = decl, $2 = out path, $3 = err path, $4 = mon path
   while kill -0 "$pid" 2>/dev/null; do
     sleep "$TICK_SECONDS"
     kill -0 "$pid" 2>/dev/null || break
-    free=$(df -k / | tail -1 | awk '{print $4}'); [ -n "$free" ] || free=0
+    free=${FCVE_FAKE_FREE_KB:-$(df -k / | tail -1 | awk '{print $4}')}; [ -n "$free" ] || free=0   # FCVE_FAKE_FREE_KB: TEST HOOK (simulated full disk)
     sz=$(fsize "$out"); [ -n "$sz" ] || sz=0
     if [ "$sz" -eq "$last_sz" ]; then flat_ticks=$((flat_ticks + 1)); else flat_ticks=0; last_sz=$sz; fi
     printf '%s tick t=%ss free_kb=%s out_bytes=%s flat_ticks=%s\n' \
@@ -115,11 +115,13 @@ run_export() { # $1 = decl, $2 = out path, $3 = err path, $4 = mon path
       # A stall is a SYMPTOM, not a diagnosis. Sample the stuck process before killing it so the cause can be read,
       # not guessed (BUG-002: a "memoization" guess stood for a week; the real cause was visible in one sample).
       if [ "$reason" = "stalled-no-output" ] && command -v sample >/dev/null 2>&1; then
-        sample "$(pgrep -n -f "$(basename "$EXPORT_BIN")")" 3 -file "${out%.export}.stall-sample.txt" >/dev/null 2>&1 \
+        EPID=$(pgrep -P "$pid" 2>/dev/null | head -1); [ -n "$EPID" ] || EPID=$pid
+        sample "$EPID" 3 -file "${out%.export}.stall-sample.txt" >/dev/null 2>&1 \
           && printf '%s SAMPLE saved: %s (read the top of stack; huge nat literals show Nat.repr/toDigits + gmpn_divrem)\n' \
                "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${out%.export}.stall-sample.txt" >>"$mon"
       fi
-      pkill -f "$(basename "$EXPORT_BIN")" 2>/dev/null
+      # Kill only THIS run's exporter (a child of $pid) -- never `pkill -f lean4export`, which would also kill unrelated exports.
+      pkill -P "$pid" 2>/dev/null
       kill "$pid" 2>/dev/null
       break
     fi

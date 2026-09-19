@@ -150,3 +150,16 @@ the original directory. nanoda printed `failed to open configuration file` and e
 4. **Exports were kept after checking**, eating 50-200 MB each and tripping the disk guard on a 2 GB-free machine. `independent-check.sh --delete-exports` (used by audit.sh) records the export's sha256 in the monitor log and removes the file.
 5. **The stall wait was 5 minutes** even for the disposable upstream attempt in `auto` mode; `STALL_TICKS` is now overridable and `auto` uses 6 (2 min of flat non-zero output).
 Verified: two full audits (different projects, Lean 4.28.0 and 4.34.0) reach PROVISIONAL with the expected rows; see `examples/`.
+
+---
+
+## BUG-007: a stalled export was stopped with `pkill -f lean4export` (kills every exporter on the machine)
+
+**Status:** Fixed 2026-09-19. **Severity:** Medium — would kill an unrelated audit's (or another user's) running export. Found while writing the stall regression test.
+`independent-check.sh` aborted a stalled export with `pkill -f "$(basename "$EXPORT_BIN")"`, matching *any* process whose command line contains `lean4export`; its stack-sample step used `pgrep -n -f` the same way.
+**Fix:** kill/sample only this run's own process tree (`pkill -P "$pid"`, `pgrep -P "$pid"`). **Regression test:** `tests/test_bootstrap.py::IndependentCheckClassification::test_stalled_export_is_BLOCKED_not_FAIL_and_stall_window_is_configurable` (drives a fake exporter). Also added test hooks `TICK_SECONDS`, `STALL_TICKS`, `FCVE_FAKE_FREE_KB` (simulated full disk) so BLOCKED paths are testable.
+
+## BUG-004 (recurrence, caught immediately): a tamper control that tampered with nothing
+
+While writing `tests/test_bootstrap.py`, the first "tampered ledger" test replaced `"PASS"` in a line that contained no `"PASS"` and fell back to appending a space, so it verified an *unmodified* ledger and the assertion failed. The fixed
+tests assert `modified != original` before trusting a control (`assertNotEqual(ev, before, "control must actually change …")`). The lesson (LESSONS.md B9) is now enforced in code, not just written down.

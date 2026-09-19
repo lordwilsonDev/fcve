@@ -3,13 +3,14 @@
 #
 # Usage:
 #   audit.sh <target-dir> --module MODULE --decl DECL [--decl DECL ...] \
-#            [--out DIR] [--work DIR] [--fast-literals auto|yes|no] [--rebuild] [--axioms a,b,c]
+#            [--out DIR] [--work DIR] [--fast-literals auto|yes|no] [--rebuild] [--skip-independent] [--axioms a,b,c]
 #
 # What it automates: rows 1-6, 8, 10 (source pin, toolchain, build, sorry/admit/native_decide, axioms,
 # stale self-descriptions, independent check). What it CANNOT do, and says so in the output:
 #   row 7 (semantic correspondence) -- a human reads the claim against the Lean statement;
 #   row 9 (kernel-vulnerability exposure) -- needs live web access.
-# So the best verdict this script can reach is PROVISIONAL, never TRUSTED. It never fixes the target.
+# So the best verdict this script can reach is PROVISIONAL, never TRUSTED: TRUSTED is not produced by any code path here.
+# It never fixes the target. --skip-independent leaves row 10 as NOT RUN (counted as unresolved), for fast checks of rows 1-9.
 #
 # --fast-literals auto (default): try the pristine lean4export/nanoda first; if the export stalls or is BLOCKED,
 #   build the patched fast-literal tools (patches/) and retry, and DISCLOSE that in AUDIT.md.
@@ -22,7 +23,7 @@
 set -u
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-TARGET="" MODULE="" OUT="" WORK="${LEAN_AUDIT_WORK:-$HOME/.lean-proof-audit}" FAST=auto REBUILD=0
+TARGET="" MODULE="" OUT="" WORK="${LEAN_AUDIT_WORK:-$HOME/.lean-proof-audit}" FAST=auto REBUILD=0 SKIP_INDEP=0
 AXIOMS="propext,Classical.choice,Quot.sound"
 DECLS=()
 while [ $# -gt 0 ]; do
@@ -33,6 +34,7 @@ while [ $# -gt 0 ]; do
     --work) WORK="$2"; shift 2 ;;
     --fast-literals) FAST="$2"; shift 2 ;;
     --rebuild) REBUILD=1; shift ;;
+    --skip-independent) SKIP_INDEP=1; shift ;;
     --axioms) AXIOMS="$2"; shift 2 ;;
     -*) echo "unknown flag: $1" >&2; exit 2 ;;
     *) TARGET="$1"; shift ;;
@@ -52,8 +54,21 @@ say() { printf '%s %s\n' "$(date -u +%H:%M:%SZ)" "$*" | tee -a "$LOG" >&2; }
 row() { printf '%s\t%s\t%s\n' "$1" "$2" "$3" >>"$ROWS"; say "row $1: $2 -- $3"; }
 timed() { local name="$1" t0; shift; t0=$(now); "$@"; local rc=$?; printf '%s\t%s\n' "$name" "$(( $(now) - t0 ))" >>"$TIMES"; return $rc; }
 
+FACTS="$OUT/facts.tsv"; : >"$FACTS"
+fact() { printf '%s\t%s\n' "$1" "$2" >>"$FACTS"; }
+
 # ---- preflight -----------------------------------------------------------------------------------------------
-FREE_KB=$(df -k "$OUT" | tail -1 | awk '{print $4}')
+# FCVE_FAKE_FREE_KB is a TEST HOOK (simulates a full disk for failure-injection tests); never set in normal use.
+FREE_KB="${FCVE_FAKE_FREE_KB:-$(df -k "$OUT" | tail -1 | awk '{print $4}')}"
+HARD_KB=$(( ${AUDIT_HARD_FLOOR_KB:-1572864} ))   # 1.5 GiB: the export guard's floor (measured, not universal)
+fact host "$(uname -s) $(uname -m) $(sw_vers -productVersion 2>/dev/null) model=$(sysctl -n hw.model 2>/dev/null) ram_gib=$(python3 -c "print(round($(sysctl -n hw.memsize 2>/dev/null || echo 0)/1073741824,1))" 2>/dev/null)"
+fact free_disk_kb "$FREE_KB"
+if [ "$FREE_KB" -lt "$HARD_KB" ]; then
+  say "BLOCKED: insufficient disk ($FREE_KB KiB free, floor $HARD_KB KiB). No expensive work was started. This is not a verdict on the proof."
+  printf '# Proof audit: %s\n\n## Verdict: UNRESOLVED -- BLOCKED before any check ran\n\nInsufficient disk: %s KiB free, hard floor %s KiB (measured on the validated Mac mini; approximate). This says nothing about the proof.\nFree space (nothing is deleted for you) and re-run.\n' "$(basename "$TARGET")" "$FREE_KB" "$HARD_KB" >"$OUT/AUDIT.md"
+  echo UNRESOLVED
+  exit 3
+fi
 say "target=$TARGET module=$MODULE decls=${DECLS[*]} free_disk_kb=$FREE_KB"
 if [ "$FREE_KB" -lt $((3 * 1024 * 1024)) ]; then
   say "WARNING: under 3 GB free. Exports are 50-200 MB each and a fresh toolchain is ~2.5 GB; the export guard aborts at 1.5 GB."
@@ -63,7 +78,7 @@ command -v lake >/dev/null || { say "FATAL: lake not on PATH (install Lean via e
 # ---- rows 1-2: source + toolchain pinned -----------------------------------------------------------------------
 r12() {
   if git -C "$TARGET" rev-parse --git-dir >/dev/null 2>&1; then
-    REV=$(git -C "$TARGET" rev-parse HEAD 2>/dev/null); REMOTE=$(git -C "$TARGET" remote get-url origin 2>/dev/null || echo "none")
+    REV=$(git -C "$TARGET" rev-parse HEAD 2>/dev/null); REMOTE=$(git -C "$TARGET" remote get-url origin 2>/dev/null || echo "none"); fact commit "${REV:-none}"; fact remote "$REMOTE"
     DIRTY=$(git -C "$TARGET" status --porcelain | wc -l | tr -d ' ')
     if [ -z "$REV" ]; then row 1 UNRESOLVED "git repo with no commit: nothing identifies the source"
     elif [ "$DIRTY" -gt 0 ]; then row 1 PARTIAL "commit $REV, remote $REMOTE, BUT $DIRTY uncommitted/untracked files: the commit does not identify what was audited"
@@ -77,6 +92,9 @@ for p in m.get("packages",[]):
     if p.get("name")=="mathlib": print(p.get("rev","")); break
 PY
 )
+  fact toolchain "${TC:-none}"; fact mathlib "${MREV:-none}"
+  fact lean_version "$( (cd "$TARGET" && lake env lean --version 2>/dev/null | head -1) || true)"
+  fact tools "elan=$(elan --version 2>/dev/null | awk '{print $2}') rustc=$(rustc --version 2>/dev/null | awk '{print $2}') cargo=$(cargo --version 2>/dev/null | awk '{print $2}') git=$(git --version | awk '{print $3}')"
   if [ -n "$TC" ]; then row 2 PASS "lean-toolchain=$TC; mathlib rev=${MREV:-none (no mathlib dependency)}; drift vs your control environment NOT compared (do that by hand)"
   else row 2 UNRESOLVED "no lean-toolchain file"; fi
 }
@@ -149,6 +167,7 @@ row 9 UNRESOLVED "needs live web access: compare ${TC:-the pinned Lean version} 
 
 # ---- row 10: independent checker --------------------------------------------------------------------------------
 r10() {
+  if [ "$SKIP_INDEP" = 1 ]; then row 10 "NOT RUN" "--skip-independent: the independent check was not attempted. This is unresolved, not a pass."; fact independent "NOT RUN (--skip-independent)"; fact patched_tools "not used (independent check not run)"; return; fi
   [ -n "$TAG" ] || { row 10 UNRESOLVED "cannot read a v-tag from lean-toolchain ('${TC:-}'): lean4export needs the exact tag"; return; }
   command -v cargo >/dev/null || { row 10 UNRESOLVED "cargo not found: nanoda cannot be built"; return; }
   if [ "$(df -k "$OUT" | tail -1 | awk '{print $4}')" -lt $((2 * 1024 * 1024)) ]; then say "WARNING: under 2 GB free before the independent check; exports are 50-200 MB and the tool builds ~0.3-0.6 GB. The export guard will abort at 1.5 GB (reported as UNRESOLVED, not a failure)."; fi
@@ -173,6 +192,9 @@ r10() {
   [ -f "$RD/results.tsv" ] || { row 10 UNRESOLVED "no results.tsv -- see independent-check*.log"; return; }
   local total pass
   total=$(tail -n +2 "$RD/results.tsv" | wc -l | tr -d ' '); pass=$(tail -n +2 "$RD/results.tsv" | awk -F'\t' '$2=="PASS"' | wc -l | tr -d ' ')
+  fact independent "$USED; $pass/$total declarations PASS"
+  if [ "$need_fast" = 1 ]; then fact patched_tools "YES -- PATCHED (patch sha256: lean4export-fast-natval $(shasum -a 256 "$HERE/../patches/lean4export-fast-natval.diff" | cut -c1-12)..., nanoda-fast-decimal-parse $(shasum -a 256 "$HERE/../patches/nanoda-fast-decimal-parse.diff" | cut -c1-12)...); validation is recorded by scripts/setup.sh (setup-record.json)"
+  else fact patched_tools "no -- upstream tools only"; fi
   cp "$RD/results.tsv" "$OUT/row10-results.tsv"; cp "$RD/tools.tsv" "$OUT/row10-tools.tsv" 2>/dev/null
   if [ "$pass" = "$total" ] && [ "$total" -gt 0 ]; then
     if [ "$need_fast" = 1 ]; then row 10 PARTIAL "PASS $pass/$total with $USED. A verdict from patched tools must be disclosed and validated (SKILL.md 'Patched tools'); results in row10-results.tsv"
@@ -188,32 +210,59 @@ timed row10-independent r10
 
 # ---- write AUDIT.md ----------------------------------------------------------------------------------------------
 python3 - "$OUT" "$TARGET" "$MODULE" "${DECLS[*]}" <<'PY'
-import sys,os,csv
+import sys,os
 out,target,module,decls=sys.argv[1:5]
 NAMES={1:"Source pinned",2:"Toolchain pinned",3:"Clean rebuild",4:"No sorry/admit",5:"No native_decide",6:"Axiom footprint",7:"Semantic correspondence",8:"Self-description not stale",9:"Kernel vulnerability exposure",10:"Independent check"}
 rows={}
 for l in open(os.path.join(out,"rows.tsv")):
     n,st,d=l.rstrip("\n").split("\t",2); rows[int(n)]=(st,d)
-sts=[rows[n][0] for n in range(1,11) if n in rows]
-if "FAIL" in sts: verdict="REJECTED (at least one row actively fails)"; why=[n for n in range(1,11) if rows.get(n,("",))[0]=="FAIL"]
-elif any(s in("UNRESOLVED","NEEDS HUMAN") for s in sts) or "PARTIAL" in sts:
-    verdict="PROVISIONAL (automated rows have no active failure; rows below keep it out of TRUSTED)"
-    why=[n for n in range(1,11) if rows.get(n,("PASS",))[0]!="PASS"]
-else: verdict="TRUSTED-candidate"; why=[]
-if "UNRESOLVED" in sts and not any(s=="PASS" for s in sts[:6]): verdict="UNRESOLVED"
+facts={}
+for l in open(os.path.join(out,"facts.tsv")):
+    k,_,v=l.rstrip("\n").partition("\t"); facts[k]=v
+sts=[rows.get(n,("NOT RUN",))[0] for n in range(1,11)]
+# --- verdict. CEILING: PROVISIONAL. There is deliberately no code path that yields TRUSTED: rows 7 (human) and 9 (web) are
+# --- never automated, and "no active failure" is not "trusted".
+if "FAIL" in sts:
+    verdict="REJECTED (at least one row actively fails)"; why=[n for n in range(1,11) if sts[n-1]=="FAIL"]
+elif not any(s=="PASS" for s in sts[:6]):
+    verdict="UNRESOLVED (no automated row could be evaluated)"; why=[n for n in range(1,11) if sts[n-1]!="PASS"]
+else:
+    verdict="PROVISIONAL (no active failure among the automated rows; unresolved rows keep it below TRUSTED)"; why=[n for n in range(1,11) if sts[n-1]!="PASS"]
+assert not verdict.startswith("TRUSTED"), "audit.sh must never emit TRUSTED"
+counts={}
+for s_ in sts: counts[s_]=counts.get(s_,0)+1
 t=[l.rstrip("\n").split("\t") for l in open(os.path.join(out,"timing.tsv"))]
 tot=sum(int(b) for a,b in t)
+def status_of(n): return rows.get(n,("NOT RUN",""))[0]
 with open(os.path.join(out,"AUDIT.md"),"w") as f:
-    f.write(f"# Proof audit: {os.path.basename(target)}\n\n- target: `{target}`\n- module: `{module}`\n- declarations: {decls}\n\n")
-    f.write(f"## Verdict: {verdict}\n\nRows keeping it out of TRUSTED: {', '.join(map(str,why)) or 'none'}. This script cannot reach TRUSTED: rows 7 and 9 need a human and the web.\n\n")
-    f.write("| # | Gate | Status | Evidence / note |\n|---|---|---|---|\n")
+    f.write(f"# Proof audit: {os.path.basename(target)}\n\n")
+    f.write(f"## Verdict: {verdict}\n\n")
+    f.write("**This automated audit cannot produce TRUSTED.** Row 7 (semantic correspondence) needs a named human; row 9 (kernel-vulnerability review) needs the web. "
+            "Rows keeping the verdict below TRUSTED: " + (", ".join(map(str,why)) or "none") + ".\n\n")
+    f.write("### At a glance\n\n| | |\n|---|---|\n")
+    def line(k,v): f.write(f"| {k} | {v} |\n")
+    line("Target",f"`{target}`"); line("Module / declarations",f"`{module}` / {decls}")
+    line("Repository commit",f"`{facts.get('commit','?')}` (remote: {facts.get('remote','?')})")
+    line("Toolchain / Lean",f"{facts.get('toolchain','?')} / {facts.get('lean_version','?')}")
+    line("Mathlib revision",facts.get("mathlib","?"))
+    line("Environment",facts.get("host","?")+"; "+facts.get("tools","?"))
+    line("Row results",", ".join(f"{k}: {v}" for k,v in sorted(counts.items())))
+    line("Patched tools",facts.get("patched_tools","unknown -- independent check did not complete"))
+    line("Independent checker (row 10)",f"**{status_of(10)}** -- {facts.get('independent','not completed')}")
+    line("Axiom audit (row 6)",f"**{status_of(6)}** -- see axioms.tsv")
+    line("Semantic review (row 7)",f"**{status_of(7)}** -- not done by this script; a named human must do it")
+    line("Web / kernel review (row 9)",f"**{status_of(9)}** -- not done by this script; needs live web access")
+    line("Free disk at start",f"{int(facts.get('free_disk_kb','0'))/1048576:.2f} GiB")
+    f.write("\n### Rows\n\n| # | Gate | Status | Evidence / note |\n|---|---|---|---|\n")
     for n in range(1,11):
         st,d=rows.get(n,("NOT RUN","")); f.write(f"| {n} | {NAMES[n]} | **{st}** | {d} |\n")
-    f.write("\n## Timing (wall clock, seconds)\n\n| step | s |\n|---|---|\n")
+    f.write("\n### Status meanings\n\nPASS = check ran and holds. FAIL = check ran and rejected the proof/evidence. BLOCKED / TOOL_ERROR = the check could not complete or the tool never ran properly: **no verdict on the proof, not a rejection**. "
+            "UNRESOLVED / NEEDS HUMAN / NOT RUN = not established, **never a pass**. PARTIAL = passes on a stated weaker basis.\n\n")
+    f.write("## Timing (wall clock, seconds)\n\n| step | s |\n|---|---|\n")
     for a,b in t: f.write(f"| {a} | {b} |\n")
     f.write(f"| **total** | **{tot}** |\n\n")
-    f.write("## Files\n`rows.tsv`, `audit.log`, `build.log`, `sorry-audit.txt`, `axioms.tsv`, `axioms-all.txt`, `independent-check*/`, `row10-results.tsv`, `row10-tools.tsv`, `setup*.log`.\n\n")
-    f.write("Provenance: this is an automated pass. Never write \"proved\" as a bare verdict; state the verdict above and list what keeps it from TRUSTED.\n")
-print(verdict)
+    f.write("## Files\n`rows.tsv`, `facts.tsv`, `audit.log`, `build.log`, `sorry-audit.txt`, `axioms.tsv`, `axioms-all.txt`, `independent-check*/`, `row10-results.tsv`, `row10-tools.tsv`, `setup*.log`.\n\n")
+    f.write("Provenance: automated pass. Never write \"proved\" as a bare verdict; state the verdict above and list what keeps it from TRUSTED. The model can propose; the experiment decides.\n")
+print(verdict.split(" ")[0])
 PY
 say "wrote $OUT/AUDIT.md"

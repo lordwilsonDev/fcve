@@ -72,7 +72,7 @@ if [ "${FAST_LITERALS:-0}" = "1" ]; then
   PATCHES="$(cd "$(dirname "$0")/.." && pwd)/patches"
   FAST_EXPORT="$WORK/lean4export-$TAG-fastnat"
   if [ ! -x "$FAST_EXPORT/.lake/build/bin/lean4export" ]; then
-    rm -rf "$FAST_EXPORT"; cp -R "$EXPORT_DIR" "$FAST_EXPORT"
+    rm -rf "$FAST_EXPORT"; cp -RL "$EXPORT_DIR" "$FAST_EXPORT"
     ( cd "$FAST_EXPORT" && patch --dry-run -s Export.lean < "$PATCHES/lean4export-fast-natval.diff" >/dev/null \
         || { echo "FATAL: exporter patch does not apply cleanly to $TAG; not forcing it" >&2; exit 1; }
       patch -s Export.lean < "$PATCHES/lean4export-fast-natval.diff" && cp "$PATCHES/NatReprCheck.lean" . && lake build \
@@ -81,7 +81,7 @@ if [ "${FAST_LITERALS:-0}" = "1" ]; then
   fi
   FAST_NANODA="$WORK/nanoda_lib-fastparse"
   if [ ! -x "$FAST_NANODA/target/release/nanoda_bin" ]; then
-    rm -rf "$FAST_NANODA"; cp -R "$WORK/nanoda_lib" "$FAST_NANODA"
+    rm -rf "$FAST_NANODA"; cp -RL "$WORK/nanoda_lib" "$FAST_NANODA"
     ( cd "$FAST_NANODA" && patch --dry-run -s src/parser.rs < "$PATCHES/nanoda-fast-decimal-parse.diff" >/dev/null \
         || { echo "FATAL: nanoda patch does not apply cleanly; not forcing it" >&2; exit 1; }
       patch -s src/parser.rs < "$PATCHES/nanoda-fast-decimal-parse.diff" \

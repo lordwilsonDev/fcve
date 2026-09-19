@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 # third-party copyrighted source papers: not redistributed; their hashes are recorded in each run's ledger
 **/source/original.pdf
+.fcve-work/
+audit-*/
+tests/fixtures/*/.lake/
+tests/fixtures/*/lake-manifest.json

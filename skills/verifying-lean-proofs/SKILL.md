@@ -37,6 +37,11 @@ properly.
 
 ## Fast path: one command
 
+> In the **FCVE repository** use the top-level entry points instead: `scripts/doctor.sh` (environment), `scripts/setup.sh` (builds/verifies the tools),
+> `scripts/smoke-test.sh` (end-to-end check that the machinery works *and can fail correctly*), `scripts/audit.sh` (this wrapper with the right defaults).
+> `CLAUDE.md` at the repo root is the ordered bootstrap. **`audit.sh` never produces TRUSTED** — its ceiling is PROVISIONAL, because rows 7 (human) and 9 (web) are not automated;
+> this is repeated in every `AUDIT.md`. Statuses are never collapsed: BLOCKED / TOOL_ERROR / UNRESOLVED are not FAIL.
+
 ```bash
 scripts/audit.sh <target-dir> --module <Module> --decl <theorem> [--decl <theorem2> ...] \
     [--fast-literals auto|yes|no] [--out <dir>] [--work <dir>] [--rebuild]
